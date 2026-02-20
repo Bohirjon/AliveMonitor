@@ -226,7 +226,60 @@ Each monitored endpoint tracks an **incident state** to manage alert lifecycle a
 
 ---
 
-## 5. Dashboard
+## 5. SSL Certificate Expiration Monitoring
+
+### Overview
+**Description:** AliveMonitor can monitor SSL certificates on HTTPS endpoints and send alerts before they expire. A global daily Hangfire job checks all SSL-enabled endpoints and sends threshold-based notifications.
+
+### Configuration
+- **Per-endpoint toggle:** Each endpoint has an `SslCheckEnabled` flag (only allowed for HTTPS URLs)
+- **Schedule:** A single recurring Hangfire job (`ssl-certificate-check`) runs daily at 06:00 UTC
+- **Alert thresholds:** 30 days (Notice), 7 days (Warning), 1 day (Critical)
+
+### SSL Check Execution
+**Process:**
+1. Daily Hangfire job queries all endpoints where `IsEnabled = true` and `SslCheckEnabled = true`
+2. For each endpoint, performs an HTTP HEAD request capturing the X509 certificate via `ServerCertificateCustomValidationCallback`
+3. Extracts certificate subject, issuer, and expiry date
+4. Creates an `SslCertificateCheckLog` record with check results
+5. Updates the endpoint's `SslLastCheckedAt` and `SslCertificateExpiresAt` fields
+
+### Alert Thresholds & Anti-Spam
+**Description:** Prevents duplicate alerts using threshold-based tracking.
+
+**Thresholds:**
+| Days Until Expiry | Urgency  | Email Icon |
+|-------------------|----------|------------|
+| <= 30 days        | Notice   | Lock       |
+| <= 7 days         | Warning  | Warning    |
+| <= 1 day          | CRITICAL | Alert      |
+
+**Anti-spam logic:**
+- `SslLastAlertedThresholdDays` on each endpoint tracks the last threshold that triggered an alert
+- An alert is only sent when a new, more urgent threshold is crossed (e.g., already alerted at 30d, won't alert again until 7d is crossed)
+- When the certificate is renewed (days remaining > 30), the threshold resets so future alerts can fire again
+
+### SSL Certificate Check Log Schema
+| Field           | Type      | Description                                   |
+|-----------------|-----------|-----------------------------------------------|
+| Id              | GUID      | Unique check log identifier                   |
+| EndpointId      | GUID      | FK to the monitored endpoint                  |
+| CheckedAt       | DateTime  | When the check was performed                  |
+| IsValid         | bool      | Whether a valid certificate was returned      |
+| SubjectName     | string?   | Certificate subject (e.g., CN=example.com)    |
+| IssuerName      | string?   | Certificate issuer                            |
+| ExpiresAt       | DateTime? | Certificate expiration date                   |
+| DaysUntilExpiry | int?      | Computed days remaining until expiration       |
+| ErrorMessage    | string?   | Error details if check failed                 |
+
+### Dashboard Integration
+- **Endpoint Card:** Shows a Shield icon with color-coded days remaining (green > 30d, yellow <= 30d, amber <= 7d, red <= 1d)
+- **Endpoint Detail Page:** SSL Certificate summary card with status, expiry date, days remaining, and last checked timestamp
+- **Endpoint Form:** Checkbox to enable SSL monitoring with HTTPS validation warning
+
+---
+
+## 6. Dashboard
 
 ### Endpoint List View
 **Description:** Main dashboard displays all endpoints with their current status.
@@ -269,7 +322,7 @@ Each monitored endpoint tracks an **incident state** to manage alert lifecycle a
 
 ---
 
-## Technical Constraints & Notes
+## 7. Technical Constraints & Notes
 
 - **No limit** on the number of endpoints per client
 - **No role-based access**: All clients have the same permissions
