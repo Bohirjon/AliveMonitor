@@ -18,6 +18,10 @@ public class MonitoredEndpoint
     public EndpointStatus CurrentStatus { get; set; } = EndpointStatus.Disabled;
     public DateTime? LastCheckedAt { get; set; }
     public Guid? TeamId { get; set; }
+    public bool SslCheckEnabled { get; set; }
+    public int? SslLastAlertedThresholdDays { get; set; }
+    public DateTime? SslLastCheckedAt { get; set; }
+    public DateTime? SslCertificateExpiresAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
@@ -25,4 +29,5 @@ public class MonitoredEndpoint
     public Team? Team { get; set; }
     public ICollection<HealthCheckLog> HealthCheckLogs { get; set; } = [];
     public ICollection<Incident> Incidents { get; set; } = [];
+    public ICollection<SslCertificateCheckLog> SslCertificateCheckLogs { get; set; } = [];
 }

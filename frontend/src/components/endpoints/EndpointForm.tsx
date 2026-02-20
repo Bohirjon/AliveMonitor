@@ -22,6 +22,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
   const [jsonPropertyExpectedValue, setJsonPropertyExpectedValue] = useState('');
   const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>([]);
   const [teamId, setTeamId] = useState('');
+  const [sslCheckEnabled, setSslCheckEnabled] = useState(false);
   const { data: teams } = useTeams();
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
         setHeaders(Object.entries(endpoint.customHeaders).map(([key, value]) => ({ key, value })));
       }
       setTeamId(endpoint.teamId ?? '');
+      setSslCheckEnabled(endpoint.sslCheckEnabled ?? false);
     }
   }, [endpoint]);
 
@@ -56,6 +58,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
       jsonPropertyName: jsonPropertyName || undefined,
       jsonPropertyExpectedValue: jsonPropertyExpectedValue || undefined,
       teamId: teamId || undefined,
+      sslCheckEnabled,
     });
   };
 
@@ -118,6 +121,22 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
                 <option key={team.id} value={team.id}>{team.name}</option>
               ))}
             </select>
+          </div>
+
+          {/* SSL Certificate Monitoring */}
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <input
+                type="checkbox"
+                checked={sslCheckEnabled}
+                onChange={(e) => setSslCheckEnabled(e.target.checked)}
+                className="h-4 w-4 rounded border-input"
+              />
+              Monitor SSL Certificate Expiration
+            </label>
+            {sslCheckEnabled && url && !url.startsWith('https://') && (
+              <p className="mt-1 text-xs text-amber-500">SSL monitoring requires an HTTPS URL</p>
+            )}
           </div>
 
           {/* Custom Headers */}

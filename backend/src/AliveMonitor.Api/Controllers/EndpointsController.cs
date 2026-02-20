@@ -45,6 +45,8 @@ public class EndpointsController(
             return BadRequest(new { message = "A valid HTTP/HTTPS URL is required" });
         if (request.IntervalMinutes < 1)
             return BadRequest(new { message = "Interval must be at least 1 minute" });
+        if (request.SslCheckEnabled && uri.Scheme != "https")
+            return BadRequest(new { message = "SSL certificate monitoring requires an HTTPS URL" });
 
         var endpoint = new MonitoredEndpoint
         {
@@ -59,6 +61,7 @@ public class EndpointsController(
             JsonPropertyName = request.JsonPropertyName,
             JsonPropertyExpectedValue = request.JsonPropertyExpectedValue,
             TeamId = request.TeamId,
+            SslCheckEnabled = request.SslCheckEnabled,
             CurrentStatus = EndpointStatus.Disabled,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
@@ -80,6 +83,8 @@ public class EndpointsController(
             return BadRequest(new { message = "A valid HTTP/HTTPS URL is required" });
         if (request.IntervalMinutes < 1)
             return BadRequest(new { message = "Interval must be at least 1 minute" });
+        if (request.SslCheckEnabled && uri.Scheme != "https")
+            return BadRequest(new { message = "SSL certificate monitoring requires an HTTPS URL" });
 
         endpoint.FriendlyName = request.FriendlyName;
         endpoint.Url = request.Url;
@@ -90,6 +95,7 @@ public class EndpointsController(
         endpoint.JsonPropertyName = request.JsonPropertyName;
         endpoint.JsonPropertyExpectedValue = request.JsonPropertyExpectedValue;
         endpoint.TeamId = request.TeamId;
+        endpoint.SslCheckEnabled = request.SslCheckEnabled;
 
         await endpointRepository.UpdateAsync(endpoint);
 
@@ -141,5 +147,9 @@ public class EndpointsController(
         e.CreatedAt,
         e.UpdatedAt,
         e.TeamId,
-        e.Team?.Name);
+        e.Team?.Name,
+        e.SslCheckEnabled,
+        e.SslLastCheckedAt,
+        e.SslCertificateExpiresAt,
+        e.SslCertificateExpiresAt.HasValue ? (int)(e.SslCertificateExpiresAt.Value - DateTime.UtcNow).TotalDays : null);
 }

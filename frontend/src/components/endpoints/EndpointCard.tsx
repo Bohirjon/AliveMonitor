@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MoreVertical, Pencil, Trash2, ExternalLink, Users } from 'lucide-react';
+import { MoreVertical, Pencil, Trash2, ExternalLink, Users, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { EndpointStatus, type MonitoredEndpoint } from '@/types';
@@ -45,6 +45,16 @@ export default function EndpointCard({ endpoint, onEdit }: EndpointCardProps) {
             <span>Every {endpoint.intervalMinutes}m</span>
             {endpoint.lastCheckedAt && (
               <span>Last: {new Date(endpoint.lastCheckedAt).toLocaleString()}</span>
+            )}
+            {endpoint.sslCheckEnabled && endpoint.sslDaysUntilExpiry != null && (
+              <span className={`flex items-center gap-1 ${
+                endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
+                endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
+                endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
+                'text-green-500'
+              }`}>
+                <Shield className="h-3 w-3" /> SSL: {endpoint.sslDaysUntilExpiry}d
+              </span>
             )}
             {endpoint.teamName && (
               <span className="flex items-center gap-1">

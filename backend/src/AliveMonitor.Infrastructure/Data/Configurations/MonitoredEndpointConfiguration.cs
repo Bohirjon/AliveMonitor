@@ -32,6 +32,8 @@ public class MonitoredEndpointConfiguration : IEntityTypeConfiguration<Monitored
             .HasConversion<string>()
             .HasMaxLength(32);
 
+        builder.Property(e => e.SslCheckEnabled).HasDefaultValue(false);
+
         builder.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
         builder.Property(e => e.UpdatedAt).HasDefaultValueSql("now()");
 

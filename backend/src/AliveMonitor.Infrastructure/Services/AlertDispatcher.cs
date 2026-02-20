@@ -9,8 +9,7 @@ namespace AliveMonitor.Infrastructure.Services;
 public class AlertDispatcher(
     IIncidentRepository incidentRepository,
     IAlertService alertService,
-    IUserRepository userRepository,
-    ITeamRepository teamRepository,
+    AlertEmailResolver alertEmailResolver,
     IOptions<AlertSettings> alertSettings,
     ILogger<AlertDispatcher> logger)
 {
@@ -28,7 +27,7 @@ public class AlertDispatcher(
                 openIncident.ResolvedAt = DateTime.UtcNow;
                 await incidentRepository.UpdateAsync(openIncident);
 
-                var alertEmails = await GetAlertEmailsAsync(endpoint);
+                var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
                 if (alertEmails.Count > 0)
                 {
                     await alertService.SendRecoveryAlertAsync(endpoint, openIncident, alertEmails);
@@ -50,7 +49,7 @@ public class AlertDispatcher(
                 };
                 await incidentRepository.CreateAsync(incident);
 
-                var alertEmails = await GetAlertEmailsAsync(endpoint);
+                var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
                 if (alertEmails.Count > 0)
                 {
                     await alertService.SendFailureAlertAsync(endpoint, incident, checkLog, alertEmails);
@@ -68,7 +67,7 @@ public class AlertDispatcher(
                     openIncident.LastNotifiedAt = DateTime.UtcNow;
                     await incidentRepository.UpdateAsync(openIncident);
 
-                    var alertEmails = await GetAlertEmailsAsync(endpoint);
+                    var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
                     if (alertEmails.Count > 0)
                     {
                         await alertService.SendFailureAlertAsync(endpoint, openIncident, checkLog, alertEmails);
@@ -86,16 +85,4 @@ public class AlertDispatcher(
         }
     }
 
-    private async Task<IReadOnlyList<string>> GetAlertEmailsAsync(MonitoredEndpoint endpoint)
-    {
-        if (endpoint.TeamId is not null)
-        {
-            var team = await teamRepository.GetByIdAsync(endpoint.TeamId.Value, endpoint.UserId);
-            if (team is not null && team.MemberEmails.Count > 0)
-                return team.MemberEmails;
-        }
-
-        var user = await userRepository.GetByIdAsync(endpoint.UserId);
-        return user is not null ? [user.AlertEmail] : [];
-    }
 }

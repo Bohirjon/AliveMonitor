@@ -11,7 +11,8 @@ public record CreateEndpointRequest(
     int ExpectedStatusCode = 200,
     string? JsonPropertyName = null,
     string? JsonPropertyExpectedValue = null,
-    Guid? TeamId = null);
+    Guid? TeamId = null,
+    bool SslCheckEnabled = false);
 
 public record UpdateEndpointRequest(
     string FriendlyName,
@@ -22,7 +23,8 @@ public record UpdateEndpointRequest(
     int ExpectedStatusCode = 200,
     string? JsonPropertyName = null,
     string? JsonPropertyExpectedValue = null,
-    Guid? TeamId = null);
+    Guid? TeamId = null,
+    bool SslCheckEnabled = false);
 
 public record EndpointResponse(
     Guid Id,
@@ -40,4 +42,8 @@ public record EndpointResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt,
     Guid? TeamId,
-    string? TeamName);
+    string? TeamName,
+    bool SslCheckEnabled,
+    DateTime? SslLastCheckedAt,
+    DateTime? SslCertificateExpiresAt,
+    int? SslDaysUntilExpiry);

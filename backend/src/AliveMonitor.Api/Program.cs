@@ -35,8 +35,11 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<HealthCheckExecutor>();
 builder.Services.AddScoped<HealthCheckScheduler>();
+builder.Services.AddScoped<AlertEmailResolver>();
 builder.Services.AddScoped<AlertDispatcher>();
 builder.Services.AddScoped<IAlertService, EmailAlertService>();
+builder.Services.AddScoped<SslCertificateChecker>();
+builder.Services.AddScoped<SslCheckScheduler>();
 builder.Services.AddScoped<IEndpointStatusNotifier, AliveMonitor.Api.Hubs.EndpointStatusNotifier>();
 
 // SignalR
@@ -158,6 +161,9 @@ using (var scope = app.Services.CreateScope())
 
     var scheduler = scope.ServiceProvider.GetRequiredService<HealthCheckScheduler>();
     await scheduler.SyncAllSchedulesAsync();
+
+    var sslScheduler = scope.ServiceProvider.GetRequiredService<SslCheckScheduler>();
+    sslScheduler.Schedule();
 }
 
 app.Run();

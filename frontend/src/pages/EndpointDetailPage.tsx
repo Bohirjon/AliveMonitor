@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Shield } from 'lucide-react';
 import { subDays } from 'date-fns';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -61,6 +61,58 @@ export default function EndpointDetailPage() {
             <p className="text-sm text-muted-foreground">{endpoint.url}</p>
           </div>
         </div>
+
+        {/* SSL Certificate Status */}
+        {endpoint.sslCheckEnabled && (
+          <div className="rounded-lg border border-border bg-card p-4">
+            <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
+              <Shield className="h-4 w-4" /> SSL Certificate
+            </h2>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="rounded-lg bg-muted/50 p-3">
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p className={`text-lg font-semibold ${
+                  endpoint.sslDaysUntilExpiry == null ? 'text-muted-foreground' :
+                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
+                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
+                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
+                  'text-green-500'
+                }`}>
+                  {endpoint.sslDaysUntilExpiry == null ? 'Pending' :
+                   endpoint.sslDaysUntilExpiry <= 7 ? 'Expiring Soon' : 'Valid'}
+                </p>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3">
+                <p className="text-xs text-muted-foreground">Expires</p>
+                <p className="text-lg font-semibold text-foreground">
+                  {endpoint.sslCertificateExpiresAt
+                    ? new Date(endpoint.sslCertificateExpiresAt).toLocaleDateString()
+                    : '—'}
+                </p>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3">
+                <p className="text-xs text-muted-foreground">Days Remaining</p>
+                <p className={`text-lg font-semibold ${
+                  endpoint.sslDaysUntilExpiry == null ? 'text-muted-foreground' :
+                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
+                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
+                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
+                  'text-green-500'
+                }`}>
+                  {endpoint.sslDaysUntilExpiry ?? '—'}
+                </p>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3">
+                <p className="text-xs text-muted-foreground">Last Checked</p>
+                <p className="text-lg font-semibold text-foreground">
+                  {endpoint.sslLastCheckedAt
+                    ? new Date(endpoint.sslLastCheckedAt).toLocaleString()
+                    : '—'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Date Range */}
         <DateRangePicker from={from} to={to} onChange={(f, t) => { setFrom(f); setTo(t); setCheckPage(1); }} />

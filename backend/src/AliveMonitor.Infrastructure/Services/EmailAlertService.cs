@@ -54,6 +54,32 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             await SendEmailAsync(email, subject, body);
     }
 
+    public async Task SendSslExpirationAlertAsync(MonitoredEndpoint endpoint, SslCertificateCheckLog checkLog, int thresholdDays, IReadOnlyList<string> alertEmails)
+    {
+        var (urgency, icon) = thresholdDays switch
+        {
+            <= 1 => ("CRITICAL", "\ud83d\udea8"),
+            <= 7 => ("Warning", "\u26a0\ufe0f"),
+            _ => ("Notice", "\ud83d\udd12"),
+        };
+
+        var subject = $"{icon} AliveMonitor SSL {urgency}: {endpoint.FriendlyName} certificate expires in {checkLog.DaysUntilExpiry} days";
+        var body = $"""
+            <h2>SSL Certificate {urgency}</h2>
+            <p><strong>Endpoint:</strong> {endpoint.FriendlyName}</p>
+            <p><strong>URL:</strong> {endpoint.Url}</p>
+            <p><strong>Certificate Subject:</strong> {checkLog.SubjectName ?? "N/A"}</p>
+            <p><strong>Issuer:</strong> {checkLog.IssuerName ?? "N/A"}</p>
+            <p><strong>Expires:</strong> {checkLog.ExpiresAt:yyyy-MM-dd HH:mm:ss} UTC</p>
+            <p><strong>Days Remaining:</strong> {checkLog.DaysUntilExpiry}</p>
+            <br/>
+            <p><em>Sent by AliveMonitor</em></p>
+            """;
+
+        foreach (var email in alertEmails)
+            await SendEmailAsync(email, subject, body);
+    }
+
     private static string FormatDuration(TimeSpan duration)
     {
         if (duration.TotalDays >= 1)

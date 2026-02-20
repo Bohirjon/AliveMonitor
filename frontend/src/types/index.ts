@@ -31,6 +31,10 @@ export interface MonitoredEndpoint {
   updatedAt: string;
   teamId?: string;
   teamName?: string;
+  sslCheckEnabled: boolean;
+  sslLastCheckedAt?: string;
+  sslCertificateExpiresAt?: string;
+  sslDaysUntilExpiry?: number;
 }
 
 export interface HealthCheckLog {
@@ -82,6 +86,7 @@ export interface CreateEndpointRequest {
   jsonPropertyName?: string;
   jsonPropertyExpectedValue?: string;
   teamId?: string;
+  sslCheckEnabled?: boolean;
 }
 
 export interface UpdateEndpointRequest extends CreateEndpointRequest {

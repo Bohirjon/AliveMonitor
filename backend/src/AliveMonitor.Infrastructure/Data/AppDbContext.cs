@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<HealthCheckLog> HealthCheckLogs => Set<HealthCheckLog>();
     public DbSet<Incident> Incidents => Set<Incident>();
     public DbSet<Team> Teams => Set<Team>();
+    public DbSet<SslCertificateCheckLog> SslCertificateCheckLogs => Set<SslCertificateCheckLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
