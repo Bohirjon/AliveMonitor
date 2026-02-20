@@ -29,7 +29,7 @@ jobs:
           target: /tmp/alivemonitor-deploy
           strip_components: 2
 
-      - name: Restart service
+      - name: Deploy and restart service
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DROPLET_HOST }}
@@ -41,4 +41,28 @@ jobs:
             sudo rm -rf /opt/alivemonitor/*
             sudo mv /tmp/alivemonitor-deploy/* /opt/alivemonitor/
             sudo rm -rf /tmp/alivemonitor-deploy
+
+            # Create systemd service if it doesn't exist
+            if [ ! -f /etc/systemd/system/alivemonitor.service ]; then
+              sudo tee /etc/systemd/system/alivemonitor.service > /dev/null <<'EOF'
+            [Unit]
+            Description=AliveMonitor API
+            After=network.target
+
+            [Service]
+            WorkingDirectory=/opt/alivemonitor
+            ExecStart=/opt/alivemonitor/AliveMonitor.Api
+            Restart=always
+            RestartSec=5
+            SyslogIdentifier=alivemonitor
+            Environment=ASPNETCORE_ENVIRONMENT=Production
+            Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+              sudo systemctl daemon-reload
+              sudo systemctl enable alivemonitor
+            fi
+
             sudo systemctl start alivemonitor
