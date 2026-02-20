@@ -1,0 +1,44 @@
+name: Deploy Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish
+        working-directory: backend
+        run: dotnet publish src/AliveMonitor.Api/AliveMonitor.Api.csproj --configuration Release --output ./publish
+
+      - name: Upload to droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          password: ${{ secrets.DROPLET_PASSWORD }}
+          source: backend/publish/
+          target: /tmp/alivemonitor-deploy
+          strip_components: 2
+
+      - name: Restart service
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          password: ${{ secrets.DROPLET_PASSWORD }}
+          script: |
+            sudo systemctl stop alivemonitor || true
+            sudo mkdir -p /opt/alivemonitor
+            sudo rm -rf /opt/alivemonitor/*
+            sudo mv /tmp/alivemonitor-deploy/* /opt/alivemonitor/
+            sudo rm -rf /tmp/alivemonitor-deploy
+            sudo systemctl start alivemonitor
