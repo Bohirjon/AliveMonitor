@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AuthTokens } from '@/types';
 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: `${import.meta.env.VITE_API_URL || ''}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -30,7 +30,7 @@ apiClient.interceptors.response.use(
         if (!stored) throw new Error('No tokens');
 
         const tokens: AuthTokens = JSON.parse(stored);
-        const { data } = await axios.post<AuthTokens>('/api/auth/refresh', {
+        const { data } = await axios.post<AuthTokens>(`${import.meta.env.VITE_API_URL || ''}/api/auth/refresh`, {
           refreshToken: tokens.refreshToken,
         });
 

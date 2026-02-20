@@ -11,7 +11,7 @@ export function createConnection(): signalR.HubConnection {
   if (connection) return connection;
 
   connection = new signalR.HubConnectionBuilder()
-    .withUrl('/hubs/endpoint-status', {
+    .withUrl(`${import.meta.env.VITE_API_URL || ''}/hubs/endpoint-status`, {
       accessTokenFactory: () => {
         const stored = localStorage.getItem('tokens');
         if (!stored) return '';
