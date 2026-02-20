@@ -35,6 +35,7 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           password: ${{ secrets.DROPLET_PASSWORD }}
+          envs: DATABASE_URL,JWT_SECRET
           script: |
             sudo systemctl stop alivemonitor || true
             sudo mkdir -p /opt/alivemonitor
@@ -42,9 +43,8 @@ jobs:
             sudo mv /tmp/alivemonitor-deploy/* /opt/alivemonitor/
             sudo rm -rf /tmp/alivemonitor-deploy
 
-            # Create systemd service if it doesn't exist
-            if [ ! -f /etc/systemd/system/alivemonitor.service ]; then
-              sudo tee /etc/systemd/system/alivemonitor.service > /dev/null <<'EOF'
+            # Always recreate the service file to pick up secret changes
+            sudo tee /etc/systemd/system/alivemonitor.service > /dev/null <<SERVICEEOF
             [Unit]
             Description=AliveMonitor API
             After=network.target
@@ -56,13 +56,17 @@ jobs:
             RestartSec=5
             SyslogIdentifier=alivemonitor
             Environment=ASPNETCORE_ENVIRONMENT=Production
+            Environment=ASPNETCORE_URLS=http://0.0.0.0:5000
             Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+            Environment=ConnectionStrings__alivemonitordb=${DATABASE_URL}
+            Environment=Jwt__Secret=${JWT_SECRET}
 
             [Install]
             WantedBy=multi-user.target
-            EOF
-              sudo systemctl daemon-reload
-              sudo systemctl enable alivemonitor
-            fi
-
+            SERVICEEOF
+            sudo systemctl daemon-reload
+            sudo systemctl enable alivemonitor
             sudo systemctl start alivemonitor
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
