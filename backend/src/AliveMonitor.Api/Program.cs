@@ -10,6 +10,7 @@ using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,13 +97,45 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, _, _) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>
+        {
+            ["Bearer"] = new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                In = ParameterLocation.Header,
+                BearerFormat = "JWT",
+                Description = "Enter your JWT token",
+            },
+        };
+
+        foreach (var operation in document.Paths.Values.SelectMany(path => path.Operations))
+        {
+            operation.Value.Security ??= [];
+            operation.Value.Security.Add(new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = [],
+            });
+        }
+
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "AliveMonitor API v1");
+    });
 }
 
 app.UseMiddleware<AliveMonitor.Api.Middleware.ExceptionHandlingMiddleware>();
@@ -112,7 +145,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<AliveMonitor.Api.Hubs.EndpointStatusHub>("/hubs/endpoint-status");
-app.UseHangfireDashboard("/hangfire");
+app.UseHangfireDashboard();
 
 // Auto-migrate database + sync schedules on startup
 using (var scope = app.Services.CreateScope())
