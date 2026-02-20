@@ -12,7 +12,7 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
 {
     private readonly EmailSettings _emailSettings = alertSettings.Value.Email;
 
-    public async Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, string alertEmail)
+    public async Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, IReadOnlyList<string> alertEmails)
     {
         var isRepeat = incident.FailureCount > 1;
         var downtime = DateTime.UtcNow - incident.OpenedAt;
@@ -31,10 +31,11 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             <p><em>Sent by AliveMonitor</em></p>
             """;
 
-        await SendEmailAsync(alertEmail, subject, body);
+        foreach (var email in alertEmails)
+            await SendEmailAsync(email, subject, body);
     }
 
-    public async Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, string alertEmail)
+    public async Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, IReadOnlyList<string> alertEmails)
     {
         var downtime = (incident.ResolvedAt ?? DateTime.UtcNow) - incident.OpenedAt;
 
@@ -49,7 +50,8 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             <p><em>Sent by AliveMonitor</em></p>
             """;
 
-        await SendEmailAsync(alertEmail, subject, body);
+        foreach (var email in alertEmails)
+            await SendEmailAsync(email, subject, body);
     }
 
     private static string FormatDuration(TimeSpan duration)

@@ -58,6 +58,7 @@ public class EndpointsController(
             ExpectedStatusCode = request.ExpectedStatusCode,
             JsonPropertyName = request.JsonPropertyName,
             JsonPropertyExpectedValue = request.JsonPropertyExpectedValue,
+            TeamId = request.TeamId,
             CurrentStatus = EndpointStatus.Disabled,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
@@ -88,6 +89,7 @@ public class EndpointsController(
         endpoint.ExpectedStatusCode = request.ExpectedStatusCode;
         endpoint.JsonPropertyName = request.JsonPropertyName;
         endpoint.JsonPropertyExpectedValue = request.JsonPropertyExpectedValue;
+        endpoint.TeamId = request.TeamId;
 
         await endpointRepository.UpdateAsync(endpoint);
 
@@ -137,5 +139,7 @@ public class EndpointsController(
         e.CurrentStatus,
         e.LastCheckedAt,
         e.CreatedAt,
-        e.UpdatedAt);
+        e.UpdatedAt,
+        e.TeamId,
+        e.Team?.Name);
 }

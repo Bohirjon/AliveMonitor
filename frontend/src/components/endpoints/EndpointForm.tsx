@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { X, Plus, Trash2 } from 'lucide-react';
 import type { MonitoredEndpoint, CreateEndpointRequest } from '@/types';
+import { useTeams } from '@/hooks/useTeams';
 
 interface EndpointFormProps {
   endpoint?: MonitoredEndpoint | null;
@@ -20,6 +21,8 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
   const [jsonPropertyName, setJsonPropertyName] = useState('');
   const [jsonPropertyExpectedValue, setJsonPropertyExpectedValue] = useState('');
   const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>([]);
+  const [teamId, setTeamId] = useState('');
+  const { data: teams } = useTeams();
 
   useEffect(() => {
     if (endpoint) {
@@ -33,6 +36,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
       if (endpoint.customHeaders) {
         setHeaders(Object.entries(endpoint.customHeaders).map(([key, value]) => ({ key, value })));
       }
+      setTeamId(endpoint.teamId ?? '');
     }
   }, [endpoint]);
 
@@ -51,6 +55,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
       expectedStatusCode,
       jsonPropertyName: jsonPropertyName || undefined,
       jsonPropertyExpectedValue: jsonPropertyExpectedValue || undefined,
+      teamId: teamId || undefined,
     });
   };
 
@@ -98,6 +103,21 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
               <label className="mb-1 block text-sm font-medium text-foreground">Expected Value</label>
               <Input value={jsonPropertyExpectedValue} onChange={(e) => setJsonPropertyExpectedValue(e.target.value)} placeholder="healthy" />
             </div>
+          </div>
+
+          {/* Team Selector */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-foreground">Alert Team</label>
+            <select
+              value={teamId}
+              onChange={(e) => setTeamId(e.target.value)}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="">None (use default alert email)</option>
+              {teams?.map((team) => (
+                <option key={team.id} value={team.id}>{team.name}</option>
+              ))}
+            </select>
           </div>
 
           {/* Custom Headers */}

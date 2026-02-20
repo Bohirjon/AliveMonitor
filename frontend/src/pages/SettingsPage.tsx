@@ -5,6 +5,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { useAuth } from '@/context/AuthContext';
 import { updateAlertEmail } from '@/api/settings';
 import { toast } from 'sonner';
+import TeamList from '@/components/settings/TeamList';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -69,6 +70,11 @@ export default function SettingsPage() {
               {saving ? 'Saving...' : 'Save'}
             </Button>
           </div>
+        </div>
+
+        {/* Teams */}
+        <div className="rounded-lg border border-border bg-card p-6">
+          <TeamList />
         </div>
       </div>
     </AppLayout>

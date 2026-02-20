@@ -10,6 +10,7 @@ public class AlertDispatcher(
     IIncidentRepository incidentRepository,
     IAlertService alertService,
     IUserRepository userRepository,
+    ITeamRepository teamRepository,
     IOptions<AlertSettings> alertSettings,
     ILogger<AlertDispatcher> logger)
 {
@@ -27,10 +28,10 @@ public class AlertDispatcher(
                 openIncident.ResolvedAt = DateTime.UtcNow;
                 await incidentRepository.UpdateAsync(openIncident);
 
-                var user = await userRepository.GetByIdAsync(endpoint.UserId);
-                if (user is not null)
+                var alertEmails = await GetAlertEmailsAsync(endpoint);
+                if (alertEmails.Count > 0)
                 {
-                    await alertService.SendRecoveryAlertAsync(endpoint, openIncident, user.AlertEmail);
+                    await alertService.SendRecoveryAlertAsync(endpoint, openIncident, alertEmails);
                     logger.LogInformation("Recovery alert sent for {Name}", endpoint.FriendlyName);
                 }
             }
@@ -49,10 +50,10 @@ public class AlertDispatcher(
                 };
                 await incidentRepository.CreateAsync(incident);
 
-                var user = await userRepository.GetByIdAsync(endpoint.UserId);
-                if (user is not null)
+                var alertEmails = await GetAlertEmailsAsync(endpoint);
+                if (alertEmails.Count > 0)
                 {
-                    await alertService.SendFailureAlertAsync(endpoint, incident, checkLog, user.AlertEmail);
+                    await alertService.SendFailureAlertAsync(endpoint, incident, checkLog, alertEmails);
                     logger.LogInformation("Failure alert sent for {Name}", endpoint.FriendlyName);
                 }
             }
@@ -67,10 +68,10 @@ public class AlertDispatcher(
                     openIncident.LastNotifiedAt = DateTime.UtcNow;
                     await incidentRepository.UpdateAsync(openIncident);
 
-                    var user = await userRepository.GetByIdAsync(endpoint.UserId);
-                    if (user is not null)
+                    var alertEmails = await GetAlertEmailsAsync(endpoint);
+                    if (alertEmails.Count > 0)
                     {
-                        await alertService.SendFailureAlertAsync(endpoint, openIncident, checkLog, user.AlertEmail);
+                        await alertService.SendFailureAlertAsync(endpoint, openIncident, checkLog, alertEmails);
                         logger.LogInformation("Throttled failure alert sent for {Name} ({Count} failures)", endpoint.FriendlyName, openIncident.FailureCount);
                     }
                 }
@@ -83,5 +84,18 @@ public class AlertDispatcher(
                 }
             }
         }
+    }
+
+    private async Task<IReadOnlyList<string>> GetAlertEmailsAsync(MonitoredEndpoint endpoint)
+    {
+        if (endpoint.TeamId is not null)
+        {
+            var team = await teamRepository.GetByIdAsync(endpoint.TeamId.Value, endpoint.UserId);
+            if (team is not null && team.MemberEmails.Count > 0)
+                return team.MemberEmails;
+        }
+
+        var user = await userRepository.GetByIdAsync(endpoint.UserId);
+        return user is not null ? [user.AlertEmail] : [];
     }
 }

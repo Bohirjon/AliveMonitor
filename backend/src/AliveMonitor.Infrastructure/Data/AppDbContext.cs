@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<MonitoredEndpoint> MonitoredEndpoints => Set<MonitoredEndpoint>();
     public DbSet<HealthCheckLog> HealthCheckLogs => Set<HealthCheckLog>();
     public DbSet<Incident> Incidents => Set<Incident>();
+    public DbSet<Team> Teams => Set<Team>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -10,7 +10,8 @@ public record CreateEndpointRequest(
     Dictionary<string, string>? CustomHeaders = null,
     int ExpectedStatusCode = 200,
     string? JsonPropertyName = null,
-    string? JsonPropertyExpectedValue = null);
+    string? JsonPropertyExpectedValue = null,
+    Guid? TeamId = null);
 
 public record UpdateEndpointRequest(
     string FriendlyName,
@@ -20,7 +21,8 @@ public record UpdateEndpointRequest(
     Dictionary<string, string>? CustomHeaders = null,
     int ExpectedStatusCode = 200,
     string? JsonPropertyName = null,
-    string? JsonPropertyExpectedValue = null);
+    string? JsonPropertyExpectedValue = null,
+    Guid? TeamId = null);
 
 public record EndpointResponse(
     Guid Id,
@@ -36,4 +38,6 @@ public record EndpointResponse(
     EndpointStatus CurrentStatus,
     DateTime? LastCheckedAt,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    Guid? TeamId,
+    string? TeamName);

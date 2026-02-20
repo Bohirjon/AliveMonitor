@@ -40,6 +40,11 @@ public class MonitoredEndpointConfiguration : IEntityTypeConfiguration<Monitored
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(e => e.Team)
+            .WithMany(t => t.MonitoredEndpoints)
+            .HasForeignKey(e => e.TeamId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasIndex(e => e.UserId);
         builder.HasIndex(e => new { e.UserId, e.IsEnabled });
     }

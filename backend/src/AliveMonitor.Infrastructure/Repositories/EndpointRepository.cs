@@ -10,11 +10,12 @@ public class EndpointRepository(AppDbContext db) : IEndpointRepository
 {
     public async Task<MonitoredEndpoint?> GetByIdAsync(Guid id, Guid userId)
         => await db.MonitoredEndpoints
+            .Include(e => e.Team)
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
     public async Task<List<MonitoredEndpoint>> GetAllAsync(Guid userId, string? search = null, EndpointStatus? status = null)
     {
-        var query = db.MonitoredEndpoints.Where(e => e.UserId == userId);
+        var query = db.MonitoredEndpoints.Include(e => e.Team).Where(e => e.UserId == userId);
 
         if (!string.IsNullOrWhiteSpace(search))
         {

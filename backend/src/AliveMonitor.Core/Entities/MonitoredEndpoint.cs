@@ -17,10 +17,12 @@ public class MonitoredEndpoint
     public string? JsonPropertyExpectedValue { get; set; }
     public EndpointStatus CurrentStatus { get; set; } = EndpointStatus.Disabled;
     public DateTime? LastCheckedAt { get; set; }
+    public Guid? TeamId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public User User { get; set; } = default!;
+    public Team? Team { get; set; }
     public ICollection<HealthCheckLog> HealthCheckLogs { get; set; } = [];
     public ICollection<Incident> Incidents { get; set; } = [];
 }

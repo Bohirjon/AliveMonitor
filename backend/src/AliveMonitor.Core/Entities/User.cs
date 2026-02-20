@@ -13,4 +13,5 @@ public class User
 
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     public ICollection<MonitoredEndpoint> MonitoredEndpoints { get; set; } = [];
+    public ICollection<Team> Teams { get; set; } = [];
 }

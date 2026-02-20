@@ -29,6 +29,8 @@ export interface MonitoredEndpoint {
   lastCheckedAt?: string;
   createdAt: string;
   updatedAt: string;
+  teamId?: string;
+  teamName?: string;
 }
 
 export interface HealthCheckLog {
@@ -79,8 +81,22 @@ export interface CreateEndpointRequest {
   expectedStatusCode: number;
   jsonPropertyName?: string;
   jsonPropertyExpectedValue?: string;
+  teamId?: string;
 }
 
 export interface UpdateEndpointRequest extends CreateEndpointRequest {
   id: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  memberEmails: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTeamRequest {
+  name: string;
+  memberEmails: string[];
 }

@@ -28,6 +28,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IEndpointRepository, EndpointRepository>();
 builder.Services.AddScoped<IHealthCheckLogRepository, HealthCheckLogRepository>();
 builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 // Services
 builder.Services.AddScoped<ITokenService, TokenService>();
