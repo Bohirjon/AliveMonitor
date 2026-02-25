@@ -138,13 +138,13 @@ public class SslCertificateChecker(IServiceScopeFactory scopeFactory, ILogger<Ss
         if (endpoint.SslLastAlertedThresholdDays is not null && endpoint.SslLastAlertedThresholdDays <= crossedThreshold)
             return;
 
-        var alertEmailResolver = services.GetRequiredService<AlertEmailResolver>();
+        var alertRecipientResolver = services.GetRequiredService<AlertRecipientResolver>();
         var alertService = services.GetRequiredService<IAlertService>();
 
-        var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
-        if (alertEmails.Count > 0)
+        var recipients = await alertRecipientResolver.GetAlertRecipientsAsync(endpoint);
+        if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0)
         {
-            await alertService.SendSslExpirationAlertAsync(endpoint, log, crossedThreshold.Value, alertEmails);
+            await alertService.SendSslExpirationAlertAsync(endpoint, log, crossedThreshold.Value, recipients);
             logger.LogInformation("SSL expiration alert sent for {Name} at {Threshold}-day threshold",
                 endpoint.FriendlyName, crossedThreshold.Value);
         }

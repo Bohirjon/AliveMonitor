@@ -23,6 +23,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.AvatarUrl).HasMaxLength(1024);
         builder.Property(u => u.AlertEmail).IsRequired().HasMaxLength(256);
 
+        builder.Property(u => u.TelegramChatId);
+
         builder.Property(u => u.CreatedAt).HasDefaultValueSql("now()");
         builder.Property(u => u.UpdatedAt).HasDefaultValueSql("now()");
     }

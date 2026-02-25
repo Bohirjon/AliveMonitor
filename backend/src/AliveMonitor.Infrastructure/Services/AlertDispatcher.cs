@@ -9,7 +9,7 @@ namespace AliveMonitor.Infrastructure.Services;
 public class AlertDispatcher(
     IIncidentRepository incidentRepository,
     IAlertService alertService,
-    AlertEmailResolver alertEmailResolver,
+    AlertRecipientResolver alertRecipientResolver,
     IOptions<AlertSettings> alertSettings,
     ILogger<AlertDispatcher> logger)
 {
@@ -27,10 +27,10 @@ public class AlertDispatcher(
                 openIncident.ResolvedAt = DateTime.UtcNow;
                 await incidentRepository.UpdateAsync(openIncident);
 
-                var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
-                if (alertEmails.Count > 0)
+                var recipients = await alertRecipientResolver.GetAlertRecipientsAsync(endpoint);
+                if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0)
                 {
-                    await alertService.SendRecoveryAlertAsync(endpoint, openIncident, alertEmails);
+                    await alertService.SendRecoveryAlertAsync(endpoint, openIncident, recipients);
                     logger.LogInformation("Recovery alert sent for {Name}", endpoint.FriendlyName);
                 }
             }
@@ -49,10 +49,10 @@ public class AlertDispatcher(
                 };
                 await incidentRepository.CreateAsync(incident);
 
-                var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
-                if (alertEmails.Count > 0)
+                var recipients = await alertRecipientResolver.GetAlertRecipientsAsync(endpoint);
+                if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0)
                 {
-                    await alertService.SendFailureAlertAsync(endpoint, incident, checkLog, alertEmails);
+                    await alertService.SendFailureAlertAsync(endpoint, incident, checkLog, recipients);
                     logger.LogInformation("Failure alert sent for {Name}", endpoint.FriendlyName);
                 }
             }
@@ -67,10 +67,10 @@ public class AlertDispatcher(
                     openIncident.LastNotifiedAt = DateTime.UtcNow;
                     await incidentRepository.UpdateAsync(openIncident);
 
-                    var alertEmails = await alertEmailResolver.GetAlertEmailsAsync(endpoint);
-                    if (alertEmails.Count > 0)
+                    var recipients = await alertRecipientResolver.GetAlertRecipientsAsync(endpoint);
+                    if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0)
                     {
-                        await alertService.SendFailureAlertAsync(endpoint, openIncident, checkLog, alertEmails);
+                        await alertService.SendFailureAlertAsync(endpoint, openIncident, checkLog, recipients);
                         logger.LogInformation("Throttled failure alert sent for {Name} ({Count} failures)", endpoint.FriendlyName, openIncident.FailureCount);
                     }
                 }

@@ -97,7 +97,7 @@ public class HealthCheckExecutor(IServiceScopeFactory scopeFactory, ILogger<Heal
             {
                 try
                 {
-                    var body = await response.Content.ReadAsStringAsync();
+                    var body = await response.Content.ReadAsStringAsync(CancellationToken.None);
                     using var doc = JsonDocument.Parse(body);
                     if (doc.RootElement.TryGetProperty(endpoint.JsonPropertyName, out var prop))
                     {

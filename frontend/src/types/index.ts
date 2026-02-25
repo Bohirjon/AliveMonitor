@@ -12,6 +12,7 @@ export interface User {
   name: string;
   avatarUrl?: string;
   alertEmail: string;
+  telegramLinked: boolean;
 }
 
 export interface MonitoredEndpoint {
@@ -97,8 +98,20 @@ export interface Team {
   id: string;
   name: string;
   memberEmails: string[];
+  telegramLinked: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface LinkCodeResponse {
+  code: string;
+  deepLink: string;
+  expiresAt: string;
+}
+
+export interface TelegramStatusResponse {
+  isLinked: boolean;
+  chatId?: number;
 }
 
 export interface CreateTeamRequest {

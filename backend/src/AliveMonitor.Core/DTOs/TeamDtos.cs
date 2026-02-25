@@ -12,5 +12,6 @@ public record TeamResponse(
     Guid Id,
     string Name,
     List<string> MemberEmails,
+    bool TelegramLinked,
     DateTime CreatedAt,
     DateTime UpdatedAt);

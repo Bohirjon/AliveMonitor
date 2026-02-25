@@ -82,6 +82,7 @@ public class TeamsController(ITeamRepository teamRepository) : ControllerBase
         t.Id,
         t.Name,
         t.MemberEmails,
+        t.TelegramChatId is not null,
         t.CreatedAt,
         t.UpdatedAt);
 }

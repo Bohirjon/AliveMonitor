@@ -19,7 +19,7 @@ public class SettingsController(IUserRepository userRepository) : ControllerBase
         var user = await userRepository.GetByIdAsync(UserId);
         if (user is null) return NotFound();
 
-        return Ok(new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail));
+        return Ok(new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail, user.TelegramChatId is not null));
     }
 
     [HttpPut("alert-email")]
