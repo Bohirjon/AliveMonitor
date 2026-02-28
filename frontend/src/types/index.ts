@@ -111,7 +111,7 @@ export interface LinkCodeResponse {
 
 export interface TelegramStatusResponse {
   isLinked: boolean;
-  chatId?: number;
+  chatId?: string;
 }
 
 export interface CreateTeamRequest {

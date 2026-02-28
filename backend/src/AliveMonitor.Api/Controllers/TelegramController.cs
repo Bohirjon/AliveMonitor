@@ -30,7 +30,7 @@ public class TelegramController(
         var user = await userRepository.GetByIdAsync(UserId);
         if (user is null) return NotFound();
 
-        return Ok(new TelegramStatusResponse(user.TelegramChatId is not null, user.TelegramChatId));
+        return Ok(new TelegramStatusResponse(user.TelegramChatId is not null, user.TelegramChatId?.ToString()));
     }
 
     [HttpGet("status/team/{teamId:guid}")]
@@ -39,7 +39,7 @@ public class TelegramController(
         var team = await teamRepository.GetByIdAsync(teamId, UserId);
         if (team is null) return NotFound();
 
-        return Ok(new TelegramStatusResponse(team.TelegramChatId is not null, team.TelegramChatId));
+        return Ok(new TelegramStatusResponse(team.TelegramChatId is not null, team.TelegramChatId?.ToString()));
     }
 
     [HttpDelete("unlink")]

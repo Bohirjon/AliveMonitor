@@ -15,6 +15,9 @@ public class TelegramLinkCodeService(
 
     public async Task<LinkCodeResponse> GenerateCodeAsync(Guid userId, Guid? teamId = null)
     {
+        if (!_telegramSettings.Enabled || string.IsNullOrEmpty(_telegramSettings.BotUsername))
+            throw new InvalidOperationException("Telegram integration is not enabled or configured.");
+
         var code = GenerateSecureCode(8);
         var expiresAt = DateTime.UtcNow.AddMinutes(10);
 
