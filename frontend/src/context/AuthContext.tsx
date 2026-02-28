@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { User, AuthTokens } from '@/types';
+import { getProfile } from '@/api/settings';
 
 interface AuthContextType {
   user: User | null;
@@ -36,6 +37,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('tokens');
     localStorage.removeItem('user');
   }, []);
+
+  useEffect(() => {
+    if (tokens?.accessToken && !user) {
+      getProfile()
+        .then((profile) => {
+          setUser(profile);
+          localStorage.setItem('user', JSON.stringify(profile));
+        })
+        .catch(() => {
+          // Token is invalid — force logout
+          setTokens(null);
+          setUser(null);
+          localStorage.removeItem('tokens');
+          localStorage.removeItem('user');
+        });
+    }
+  }, [tokens, user]);
 
   const updateTokens = useCallback((newTokens: AuthTokens) => {
     setTokens(newTokens);
