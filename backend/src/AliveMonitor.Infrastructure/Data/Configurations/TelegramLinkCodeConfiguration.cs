@@ -24,5 +24,10 @@ public class TelegramLinkCodeConfiguration : IEntityTypeConfiguration<TelegramLi
             .WithMany()
             .HasForeignKey(t => t.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<Team>()
+            .WithMany()
+            .HasForeignKey(t => t.TeamId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
