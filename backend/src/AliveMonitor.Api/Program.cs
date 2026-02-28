@@ -29,18 +29,23 @@ builder.Services.AddScoped<IEndpointRepository, EndpointRepository>();
 builder.Services.AddScoped<IHealthCheckLogRepository, HealthCheckLogRepository>();
 builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<ITelegramLinkCodeRepository, TelegramLinkCodeRepository>();
 
 // Services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<HealthCheckExecutor>();
 builder.Services.AddScoped<HealthCheckScheduler>();
-builder.Services.AddScoped<AlertEmailResolver>();
+builder.Services.AddScoped<AlertRecipientResolver>();
 builder.Services.AddScoped<AlertDispatcher>();
-builder.Services.AddScoped<IAlertService, EmailAlertService>();
+builder.Services.AddScoped<EmailAlertService>();
+builder.Services.AddScoped<TelegramAlertService>();
+builder.Services.AddScoped<IAlertService, CompositeAlertService>();
+builder.Services.AddScoped<TelegramLinkCodeService>();
 builder.Services.AddScoped<SslCertificateChecker>();
 builder.Services.AddScoped<SslCheckScheduler>();
 builder.Services.AddScoped<IEndpointStatusNotifier, AliveMonitor.Api.Hubs.EndpointStatusNotifier>();
+builder.Services.AddHostedService<TelegramBotService>();
 
 // SignalR
 builder.Services.AddSignalR();

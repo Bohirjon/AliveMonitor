@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using AliveMonitor.Core.Configuration;
+using AliveMonitor.Core.DTOs;
 using AliveMonitor.Core.Entities;
 using AliveMonitor.Core.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -12,7 +13,7 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
 {
     private readonly EmailSettings _emailSettings = alertSettings.Value.Email;
 
-    public async Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, IReadOnlyList<string> alertEmails)
+    public async Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, AlertRecipients recipients)
     {
         var isRepeat = incident.FailureCount > 1;
         var downtime = DateTime.UtcNow - incident.OpenedAt;
@@ -31,11 +32,11 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             <p><em>Sent by AliveMonitor</em></p>
             """;
 
-        foreach (var email in alertEmails)
+        foreach (var email in recipients.Emails)
             await SendEmailAsync(email, subject, body);
     }
 
-    public async Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, IReadOnlyList<string> alertEmails)
+    public async Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, AlertRecipients recipients)
     {
         var downtime = (incident.ResolvedAt ?? DateTime.UtcNow) - incident.OpenedAt;
 
@@ -50,11 +51,11 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             <p><em>Sent by AliveMonitor</em></p>
             """;
 
-        foreach (var email in alertEmails)
+        foreach (var email in recipients.Emails)
             await SendEmailAsync(email, subject, body);
     }
 
-    public async Task SendSslExpirationAlertAsync(MonitoredEndpoint endpoint, SslCertificateCheckLog checkLog, int thresholdDays, IReadOnlyList<string> alertEmails)
+    public async Task SendSslExpirationAlertAsync(MonitoredEndpoint endpoint, SslCertificateCheckLog checkLog, int thresholdDays, AlertRecipients recipients)
     {
         var (urgency, icon) = thresholdDays switch
         {
@@ -76,7 +77,7 @@ public class EmailAlertService(IOptions<AlertSettings> alertSettings, ILogger<Em
             <p><em>Sent by AliveMonitor</em></p>
             """;
 
-        foreach (var email in alertEmails)
+        foreach (var email in recipients.Emails)
             await SendEmailAsync(email, subject, body);
     }
 

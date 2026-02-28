@@ -1,10 +1,11 @@
+using AliveMonitor.Core.DTOs;
 using AliveMonitor.Core.Entities;
 
 namespace AliveMonitor.Core.Interfaces;
 
 public interface IAlertService
 {
-    Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, IReadOnlyList<string> alertEmails);
-    Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, IReadOnlyList<string> alertEmails);
-    Task SendSslExpirationAlertAsync(MonitoredEndpoint endpoint, SslCertificateCheckLog checkLog, int thresholdDays, IReadOnlyList<string> alertEmails);
+    Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, AlertRecipients recipients);
+    Task SendRecoveryAlertAsync(MonitoredEndpoint endpoint, Incident incident, AlertRecipients recipients);
+    Task SendSslExpirationAlertAsync(MonitoredEndpoint endpoint, SslCertificateCheckLog checkLog, int thresholdDays, AlertRecipients recipients);
 }

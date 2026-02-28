@@ -18,6 +18,8 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder.Property(t => t.MemberEmails)
             .HasColumnType("jsonb");
 
+        builder.Property(t => t.TelegramChatId);
+
         builder.Property(t => t.CreatedAt).HasDefaultValueSql("now()");
         builder.Property(t => t.UpdatedAt).HasDefaultValueSql("now()");
 

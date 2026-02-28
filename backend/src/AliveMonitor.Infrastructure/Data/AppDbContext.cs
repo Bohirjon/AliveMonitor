@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Incident> Incidents => Set<Incident>();
     public DbSet<Team> Teams => Set<Team>();
     public DbSet<SslCertificateCheckLog> SslCertificateCheckLogs => Set<SslCertificateCheckLog>();
+    public DbSet<TelegramLinkCode> TelegramLinkCodes => Set<TelegramLinkCode>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

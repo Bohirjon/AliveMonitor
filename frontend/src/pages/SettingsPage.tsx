@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { updateAlertEmail } from '@/api/settings';
 import { toast } from 'sonner';
 import TeamList from '@/components/settings/TeamList';
+import TelegramLinkSection from '@/components/settings/TelegramLinkSection';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -71,6 +72,9 @@ export default function SettingsPage() {
             </Button>
           </div>
         </div>
+
+        {/* Telegram */}
+        <TelegramLinkSection />
 
         {/* Teams */}
         <div className="rounded-lg border border-border bg-card p-6">

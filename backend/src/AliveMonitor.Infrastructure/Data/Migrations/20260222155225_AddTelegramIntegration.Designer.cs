@@ -3,6 +3,7 @@ using System;
 using AliveMonitor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AliveMonitor.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222155225_AddTelegramIntegration")]
+    partial class AddTelegramIntegration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,8 +337,6 @@ namespace AliveMonitor.Infrastructure.Data.Migrations
 
                     b.HasIndex("ExpiresAt");
 
-                    b.HasIndex("TeamId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("telegram_link_codes", (string)null);
@@ -391,9 +392,6 @@ namespace AliveMonitor.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("GoogleId")
-                        .IsUnique();
-
-                    b.HasIndex("TelegramChatId")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
@@ -474,11 +472,6 @@ namespace AliveMonitor.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("AliveMonitor.Core.Entities.TelegramLinkCode", b =>
                 {
-                    b.HasOne("AliveMonitor.Core.Entities.Team", null)
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("AliveMonitor.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
