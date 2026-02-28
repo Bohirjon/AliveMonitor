@@ -90,10 +90,20 @@ export default function TeamList() {
                       Link TG
                     </Button>
                   )}
-                  <Button variant="ghost" size="icon" onClick={() => setEditingTeam(team)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Edit team ${team.name}`}
+                    onClick={() => setEditingTeam(team)}
+                  >
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => deleteTeam.mutate(team.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Delete team ${team.name}`}
+                    onClick={() => deleteTeam.mutate(team.id)}
+                  >
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
                 </div>
