@@ -154,9 +154,11 @@ app.UseHttpsRedirection();
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 app.MapControllers();
 app.MapHub<AliveMonitor.Api.Hubs.EndpointStatusHub>("/hubs/endpoint-status");
 app.UseHangfireDashboard();
+app.MapFallbackToFile("index.html");
 
 // Auto-migrate database + sync schedules on startup
 using (var scope = app.Services.CreateScope())
