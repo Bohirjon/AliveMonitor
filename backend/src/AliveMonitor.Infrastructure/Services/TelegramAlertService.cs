@@ -13,6 +13,7 @@ public class TelegramAlertService(IOptions<AlertSettings> alertSettings, ILogger
 {
     private readonly TelegramSettings _settings = alertSettings.Value.Telegram;
     private readonly TelegramBotClient? _bot = alertSettings.Value.Telegram.Enabled
+        && !string.IsNullOrWhiteSpace(alertSettings.Value.Telegram.BotToken)
         ? new TelegramBotClient(alertSettings.Value.Telegram.BotToken)
         : null;
 

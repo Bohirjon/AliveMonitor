@@ -11,7 +11,7 @@ public class AlertRecipientResolver(ITeamRepository teamRepository, IUserReposit
         if (endpoint.TeamId is not null)
         {
             var team = await teamRepository.GetByIdAsync(endpoint.TeamId.Value, endpoint.UserId);
-            if (team is not null && team.MemberEmails.Count > 0)
+            if (team is not null && (team.MemberEmails.Count > 0 || team.TelegramChatId.HasValue))
             {
                 var telegramChatIds = team.TelegramChatId.HasValue
                     ? new List<long> { team.TelegramChatId.Value }
