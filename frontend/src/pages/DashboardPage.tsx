@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
   const [editingEndpoint, setEditingEndpoint] = useState<MonitoredEndpoint | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useSignalR();
 
@@ -85,7 +86,7 @@ export default function DashboardPage() {
         ) : endpoints && endpoints.length > 0 ? (
           <div className="space-y-3">
             {endpoints.map((endpoint) => (
-              <EndpointCard key={endpoint.id} endpoint={endpoint} onEdit={handleEdit} />
+              <EndpointCard key={endpoint.id} endpoint={endpoint} onEdit={handleEdit} isMenuOpen={openMenuId === endpoint.id} onMenuToggle={(open) => setOpenMenuId(open ? endpoint.id : null)} />
             ))}
           </div>
         ) : (

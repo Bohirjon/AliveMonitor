@@ -135,7 +135,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
               Monitor SSL Certificate Expiration
             </label>
             {sslCheckEnabled && url && !url.startsWith('https://') && (
-              <p className="mt-1 text-xs text-amber-500">SSL monitoring requires an HTTPS URL</p>
+              <p className="mt-1 text-xs text-warning">SSL monitoring requires an HTTPS URL</p>
             )}
           </div>
 

@@ -73,10 +73,10 @@ export default function EndpointDetailPage() {
                 <p className="text-xs text-muted-foreground">Status</p>
                 <p className={`text-lg font-semibold ${
                   endpoint.sslDaysUntilExpiry == null ? 'text-muted-foreground' :
-                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
-                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
-                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
-                  'text-green-500'
+                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-destructive' :
+                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-warning' :
+                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-warning' :
+                  'text-success'
                 }`}>
                   {endpoint.sslDaysUntilExpiry == null ? 'Pending' :
                    endpoint.sslDaysUntilExpiry <= 7 ? 'Expiring Soon' : 'Valid'}
@@ -94,10 +94,10 @@ export default function EndpointDetailPage() {
                 <p className="text-xs text-muted-foreground">Days Remaining</p>
                 <p className={`text-lg font-semibold ${
                   endpoint.sslDaysUntilExpiry == null ? 'text-muted-foreground' :
-                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
-                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
-                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
-                  'text-green-500'
+                  endpoint.sslDaysUntilExpiry <= 1 ? 'text-destructive' :
+                  endpoint.sslDaysUntilExpiry <= 7 ? 'text-warning' :
+                  endpoint.sslDaysUntilExpiry <= 30 ? 'text-warning' :
+                  'text-success'
                 }`}>
                   {endpoint.sslDaysUntilExpiry ?? '—'}
                 </p>
