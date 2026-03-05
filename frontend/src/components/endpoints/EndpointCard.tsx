@@ -1,10 +1,11 @@
+import { useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVertical, Pencil, Trash2, ExternalLink, Users, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { EndpointStatus, type MonitoredEndpoint } from '@/types';
 import { useToggleEndpoint, useDeleteEndpoint } from '@/hooks/useEndpoints';
-import { useState } from 'react';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 const statusConfig = {
   [EndpointStatus.Healthy]: { label: 'Healthy', variant: 'success' as const, dot: 'bg-status-healthy' },
@@ -15,13 +16,17 @@ const statusConfig = {
 interface EndpointCardProps {
   endpoint: MonitoredEndpoint;
   onEdit: (endpoint: MonitoredEndpoint) => void;
+  isMenuOpen: boolean;
+  onMenuToggle: (open: boolean) => void;
 }
 
-export default function EndpointCard({ endpoint, onEdit }: EndpointCardProps) {
+export default function EndpointCard({ endpoint, onEdit, isMenuOpen, onMenuToggle }: EndpointCardProps) {
   const toggle = useToggleEndpoint();
   const remove = useDeleteEndpoint();
-  const [showMenu, setShowMenu] = useState(false);
   const config = statusConfig[endpoint.currentStatus];
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeMenu = useCallback(() => onMenuToggle(false), [onMenuToggle]);
+  useClickOutside(menuRef, closeMenu, isMenuOpen);
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-sm">
@@ -73,21 +78,21 @@ export default function EndpointCard({ endpoint, onEdit }: EndpointCardProps) {
           >
             {endpoint.isEnabled ? 'Disable' : 'Enable'}
           </Button>
-          <div className="relative">
-            <Button variant="ghost" size="icon" onClick={() => setShowMenu(!showMenu)}>
+          <div ref={menuRef} className="relative">
+            <Button variant="ghost" size="icon" onClick={() => onMenuToggle(!isMenuOpen)}>
               <MoreVertical className="h-4 w-4" />
             </Button>
-            {showMenu && (
+            {isMenuOpen && (
               <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-md border border-border bg-popover py-1 shadow-md">
                 <button
                   className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-foreground hover:bg-accent"
-                  onClick={() => { onEdit(endpoint); setShowMenu(false); }}
+                  onClick={() => { onEdit(endpoint); onMenuToggle(false); }}
                 >
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </button>
                 <button
                   className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-destructive hover:bg-accent"
-                  onClick={() => { remove.mutate(endpoint.id); setShowMenu(false); }}
+                  onClick={() => { remove.mutate(endpoint.id); onMenuToggle(false); }}
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </button>
