@@ -16,8 +16,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           {
             'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'default',
             'bg-destructive text-destructive-foreground hover:bg-destructive/90': variant === 'destructive',
-            'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
-            'hover:bg-accent hover:text-accent-foreground': variant === 'ghost',
+            'border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground': variant === 'outline',
+            'text-foreground hover:bg-accent hover:text-accent-foreground': variant === 'ghost',
             'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
           },
           {

@@ -7,9 +7,9 @@ import { useToggleEndpoint, useDeleteEndpoint } from '@/hooks/useEndpoints';
 import { useState } from 'react';
 
 const statusConfig = {
-  [EndpointStatus.Healthy]: { label: 'Healthy', variant: 'success' as const, dot: 'bg-green-500' },
-  [EndpointStatus.Unhealthy]: { label: 'Unhealthy', variant: 'destructive' as const, dot: 'bg-red-500' },
-  [EndpointStatus.Disabled]: { label: 'Disabled', variant: 'secondary' as const, dot: 'bg-gray-400' },
+  [EndpointStatus.Healthy]: { label: 'Healthy', variant: 'success' as const, dot: 'bg-status-healthy' },
+  [EndpointStatus.Unhealthy]: { label: 'Unhealthy', variant: 'destructive' as const, dot: 'bg-status-unhealthy' },
+  [EndpointStatus.Disabled]: { label: 'Disabled', variant: 'secondary' as const, dot: 'bg-status-disabled' },
 };
 
 interface EndpointCardProps {
@@ -48,10 +48,10 @@ export default function EndpointCard({ endpoint, onEdit }: EndpointCardProps) {
             )}
             {endpoint.sslCheckEnabled && endpoint.sslDaysUntilExpiry != null && (
               <span className={`flex items-center gap-1 ${
-                endpoint.sslDaysUntilExpiry <= 1 ? 'text-red-500' :
-                endpoint.sslDaysUntilExpiry <= 7 ? 'text-amber-500' :
-                endpoint.sslDaysUntilExpiry <= 30 ? 'text-yellow-500' :
-                'text-green-500'
+                endpoint.sslDaysUntilExpiry <= 1 ? 'text-destructive' :
+                endpoint.sslDaysUntilExpiry <= 7 ? 'text-warning' :
+                endpoint.sslDaysUntilExpiry <= 30 ? 'text-warning' :
+                'text-success'
               }`}>
                 <Shield className="h-3 w-3" /> SSL: {endpoint.sslDaysUntilExpiry}d
               </span>
