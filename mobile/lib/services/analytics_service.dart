@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/analytics.dart';
 import 'api_client.dart';
 
@@ -41,6 +42,8 @@ class AnalyticsService {
       '/endpoints/$endpointId/checks',
       queryParameters: params,
     );
+    debugPrint('=== CheckLogs raw response ===');
+    debugPrint('${response.data}');
     final data = response.data as Map<String, dynamic>;
     return PaginatedResponse<HealthCheckLog>(
       items: (data['items'] as List)
@@ -66,6 +69,8 @@ class AnalyticsService {
       '/endpoints/$endpointId/incidents',
       queryParameters: params,
     );
+    debugPrint('=== Incidents raw response ===');
+    debugPrint('${response.data}');
     return (response.data as List)
         .map((e) => Incident.fromJson(e as Map<String, dynamic>))
         .toList();

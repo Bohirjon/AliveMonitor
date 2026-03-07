@@ -95,7 +95,10 @@ class _EndpointDetailScreenState extends State<EndpointDetailScreen> {
       _checkLogs = checkLogsResponse.items;
       _totalPages = checkLogsResponse.totalPages;
       _incidents = results[3] as List<Incident>;
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('=== Endpoint Detail Load Error ===');
+      debugPrint('Error: $e');
+      debugPrint('Stack: $stack');
       _error = 'Failed to load endpoint details';
     } finally {
       if (mounted) setState(() => _isLoading = false);

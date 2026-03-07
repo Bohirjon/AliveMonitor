@@ -22,7 +22,6 @@ class AnalyticsSummary {
 
 class HealthCheckLog {
   final String id;
-  final String endpointId;
   final DateTime checkedAt;
   final int? httpStatusCode;
   final double responseTimeMs;
@@ -31,7 +30,6 @@ class HealthCheckLog {
 
   HealthCheckLog({
     required this.id,
-    required this.endpointId,
     required this.checkedAt,
     this.httpStatusCode,
     required this.responseTimeMs,
@@ -42,7 +40,6 @@ class HealthCheckLog {
   factory HealthCheckLog.fromJson(Map<String, dynamic> json) =>
       HealthCheckLog(
         id: json['id'] as String,
-        endpointId: json['endpointId'] as String,
         checkedAt: DateTime.parse(json['checkedAt'] as String),
         httpStatusCode: json['httpStatusCode'] as int?,
         responseTimeMs: (json['responseTimeMs'] as num).toDouble(),
@@ -53,7 +50,6 @@ class HealthCheckLog {
 
 class Incident {
   final String id;
-  final String endpointId;
   final DateTime openedAt;
   final DateTime lastNotifiedAt;
   final DateTime? resolvedAt;
@@ -61,7 +57,6 @@ class Incident {
 
   Incident({
     required this.id,
-    required this.endpointId,
     required this.openedAt,
     required this.lastNotifiedAt,
     this.resolvedAt,
@@ -70,7 +65,6 @@ class Incident {
 
   factory Incident.fromJson(Map<String, dynamic> json) => Incident(
         id: json['id'] as String,
-        endpointId: json['endpointId'] as String,
         openedAt: DateTime.parse(json['openedAt'] as String),
         lastNotifiedAt: DateTime.parse(json['lastNotifiedAt'] as String),
         resolvedAt: json['resolvedAt'] != null
