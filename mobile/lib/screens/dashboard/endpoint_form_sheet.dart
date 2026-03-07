@@ -246,8 +246,15 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                 // Team selector
                 Consumer<TeamProvider>(
                   builder: (context, teamProvider, _) {
+                    // Reset selection if team not in loaded list
+                    final validTeamIds = teamProvider.teams.map((t) => t.id).toSet();
+                    final effectiveTeamId =
+                        _selectedTeamId != null && validTeamIds.contains(_selectedTeamId)
+                            ? _selectedTeamId
+                            : null;
+
                     return DropdownButtonFormField<String?>(
-                      initialValue: _selectedTeamId,
+                      value: effectiveTeamId,
                       decoration: const InputDecoration(labelText: 'Team'),
                       items: [
                         const DropdownMenuItem(
