@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment config files (contain client IDs)
+env/dev.json
+env/prod.json
+!env/.env.example.json

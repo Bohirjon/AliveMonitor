@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'config/theme.dart';
 import 'config/router.dart';
@@ -30,6 +31,7 @@ class _AliveMonitorAppState extends State<AliveMonitorApp> {
   late final EndpointProvider _endpointProvider;
   late final TeamProvider _teamProvider;
   late final SignalRService _signalRService;
+  late final GoRouter _router;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _AliveMonitorAppState extends State<AliveMonitorApp> {
     _endpointProvider = EndpointProvider(EndpointService(_apiClient));
     _teamProvider = TeamProvider(TeamService(_apiClient));
     _signalRService = SignalRService(_apiClient);
+    _router = createRouter(_authProvider);
 
     // Connect SignalR when auth changes
     _authProvider.addListener(_handleAuthChange);
@@ -78,17 +81,15 @@ class _AliveMonitorAppState extends State<AliveMonitorApp> {
             value: _endpointProvider),
         ChangeNotifierProvider<TeamProvider>.value(value: _teamProvider),
       ],
-      child: Consumer2<AuthProvider, ThemeProvider>(
-        builder: (context, auth, themeProvider, _) {
-          final router = createRouter(auth);
-
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
           return MaterialApp.router(
             title: 'AliveMonitor',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            routerConfig: router,
+            routerConfig: _router,
           );
         },
       ),

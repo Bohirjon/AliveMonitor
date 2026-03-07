@@ -104,7 +104,15 @@ class AuthProvider extends ChangeNotifier {
     final idToken = account.authentication.idToken;
     if (idToken == null) throw Exception('Failed to get Google ID token');
 
-    final result = await _authService.googleSignIn(idToken);
+    final ({AuthTokens tokens, User user}) result;
+    try {
+      result = await _authService.googleSignIn(idToken);
+    } catch (e, stack) {
+      debugPrint('=== Google Sign-In API Error ===');
+      debugPrint('Error: $e');
+      debugPrint('Stack: $stack');
+      rethrow;
+    }
 
     _tokens = result.tokens;
     _user = result.user;
