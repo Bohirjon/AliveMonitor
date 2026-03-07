@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../config/constants.dart';
@@ -18,6 +19,7 @@ class AuthProvider extends ChangeNotifier {
   User? _user;
   AuthTokens? _tokens;
   bool _isLoading = true;
+  bool _googleInitialized = false;
 
   User? get user => _user;
   AuthTokens? get tokens => _tokens;
@@ -40,6 +42,15 @@ class AuthProvider extends ChangeNotifier {
     };
 
     _loadStoredAuth();
+  }
+
+  Future<void> _ensureGoogleInitialized() async {
+    if (_googleInitialized) return;
+    await GoogleSignIn.instance.initialize(
+      clientId: AppConstants.googleClientId,
+      serverClientId: AppConstants.googleServerClientId,
+    );
+    _googleInitialized = true;
   }
 
   Future<void> _loadStoredAuth() async {
@@ -80,12 +91,15 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signInWithGoogle() async {
-    final googleSignIn = GoogleSignIn.instance;
-    await googleSignIn.initialize(
-      clientId: AppConstants.googleClientId,
-      serverClientId: AppConstants.googleServerClientId,
-    );
-    final account = await googleSignIn.authenticate();
+    await _ensureGoogleInitialized();
+
+    final GoogleSignInAccount account;
+    try {
+      account = await GoogleSignIn.instance.authenticate();
+    } on PlatformException catch (e) {
+      if (e.code == 'sign_in_canceled') return; // user cancelled
+      rethrow;
+    }
 
     final idToken = account.authentication.idToken;
     if (idToken == null) throw Exception('Failed to get Google ID token');
@@ -117,7 +131,9 @@ class AuthProvider extends ChangeNotifier {
     }
 
     try {
-      await GoogleSignIn.instance.signOut();
+      if (_googleInitialized) {
+        await GoogleSignIn.instance.signOut();
+      }
     } catch (_) {}
 
     _tokens = null;

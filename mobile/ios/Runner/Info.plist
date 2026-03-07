@@ -31,8 +31,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- Reversed iOS client ID - replace after creating iOS OAuth client -->
-				<string>com.googleusercontent.apps.51441565690-REPLACE_WITH_IOS_CLIENT_ID</string>
+				<string>com.googleusercontent.apps.51441565690-85jlh00f4387iihb07c3du1oui85tpc9</string>
 			</array>
 		</dict>
 	</array>
