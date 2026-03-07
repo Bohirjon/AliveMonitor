@@ -19,10 +19,11 @@ class AppConstants {
   // iOS client ID - create in Google Cloud Console > Credentials > OAuth 2.0 Client IDs
   // Type: iOS, Bundle ID: com.alivemonitor.aliveMonitor
   static const String googleClientIdIos =
-      '51441565690-REPLACE_WITH_IOS_CLIENT_ID.apps.googleusercontent.com';
+      '51441565690-51441565690-85jlh00f4387iihb07c3du1oui85tpc9.apps.googleusercontent.com.apps.googleusercontent.com';
 
   static const String telegramBotName = 'AliveMonitorBot';
 
   /// Returns the platform-appropriate Google client ID for GoogleSignIn.initialize()
-  static String? get googleClientId => Platform.isIOS ? googleClientIdIos : null;
+  static String? get googleClientId =>
+      Platform.isIOS ? googleClientIdIos : null;
 }
