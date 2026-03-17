@@ -9,6 +9,7 @@ public class HealthCheckLog
     public long ResponseTimeMs { get; set; }
     public bool IsHealthy { get; set; }
     public string? ErrorMessage { get; set; }
+    public int RetryAttempts { get; set; }
 
     public MonitoredEndpoint Endpoint { get; set; } = default!;
 }

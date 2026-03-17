@@ -12,7 +12,8 @@ public record CheckLogResponse(
     int? HttpStatusCode,
     long ResponseTimeMs,
     bool IsHealthy,
-    string? ErrorMessage);
+    string? ErrorMessage,
+    int RetryAttempts);
 
 public record PaginatedResponse<T>(
     List<T> Items,

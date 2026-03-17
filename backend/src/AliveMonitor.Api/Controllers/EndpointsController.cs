@@ -47,6 +47,8 @@ public class EndpointsController(
             return BadRequest(new { message = "Interval must be at least 1 minute" });
         if (request.SslCheckEnabled && uri.Scheme != "https")
             return BadRequest(new { message = "SSL certificate monitoring requires an HTTPS URL" });
+        if (request.MaxRetries < 0 || request.MaxRetries > 5)
+            return BadRequest(new { message = "Max retries must be between 0 and 5" });
 
         var endpoint = new MonitoredEndpoint
         {
@@ -55,6 +57,7 @@ public class EndpointsController(
             Url = request.Url,
             IntervalMinutes = request.IntervalMinutes,
             TimeoutSeconds = request.TimeoutSeconds,
+            MaxRetries = request.MaxRetries,
             IsEnabled = false,
             CustomHeadersJson = request.CustomHeaders is not null ? JsonSerializer.Serialize(request.CustomHeaders) : null,
             ExpectedStatusCode = request.ExpectedStatusCode,
@@ -85,11 +88,14 @@ public class EndpointsController(
             return BadRequest(new { message = "Interval must be at least 1 minute" });
         if (request.SslCheckEnabled && uri.Scheme != "https")
             return BadRequest(new { message = "SSL certificate monitoring requires an HTTPS URL" });
+        if (request.MaxRetries < 0 || request.MaxRetries > 5)
+            return BadRequest(new { message = "Max retries must be between 0 and 5" });
 
         endpoint.FriendlyName = request.FriendlyName;
         endpoint.Url = request.Url;
         endpoint.IntervalMinutes = request.IntervalMinutes;
         endpoint.TimeoutSeconds = request.TimeoutSeconds;
+        endpoint.MaxRetries = request.MaxRetries;
         endpoint.CustomHeadersJson = request.CustomHeaders is not null ? JsonSerializer.Serialize(request.CustomHeaders) : null;
         endpoint.ExpectedStatusCode = request.ExpectedStatusCode;
         endpoint.JsonPropertyName = request.JsonPropertyName;
@@ -151,5 +157,6 @@ public class EndpointsController(
         e.SslCheckEnabled,
         e.SslLastCheckedAt,
         e.SslCertificateExpiresAt,
-        e.SslCertificateExpiresAt.HasValue ? (int)(e.SslCertificateExpiresAt.Value - DateTime.UtcNow).TotalDays : null);
+        e.SslCertificateExpiresAt.HasValue ? (int)(e.SslCertificateExpiresAt.Value - DateTime.UtcNow).TotalDays : null,
+        e.MaxRetries);
 }

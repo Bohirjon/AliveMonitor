@@ -30,6 +30,7 @@ class MonitoredEndpoint {
   final String url;
   final int intervalMinutes;
   final int timeoutSeconds;
+  final int maxRetries;
   final bool isEnabled;
   final Map<String, String>? customHeaders;
   final int expectedStatusCode;
@@ -52,6 +53,7 @@ class MonitoredEndpoint {
     required this.url,
     required this.intervalMinutes,
     required this.timeoutSeconds,
+    this.maxRetries = 0,
     required this.isEnabled,
     this.customHeaders,
     required this.expectedStatusCode,
@@ -76,6 +78,7 @@ class MonitoredEndpoint {
       url: json['url'] as String,
       intervalMinutes: json['intervalMinutes'] as int,
       timeoutSeconds: json['timeoutSeconds'] as int,
+      maxRetries: json['maxRetries'] as int? ?? 0,
       isEnabled: json['isEnabled'] as bool,
       customHeaders: json['customHeaders'] != null
           ? Map<String, String>.from(json['customHeaders'] as Map)
@@ -110,6 +113,7 @@ class CreateEndpointRequest {
   final String url;
   final int intervalMinutes;
   final int timeoutSeconds;
+  final int maxRetries;
   final Map<String, String>? customHeaders;
   final int expectedStatusCode;
   final String? jsonPropertyName;
@@ -122,6 +126,7 @@ class CreateEndpointRequest {
     required this.url,
     required this.intervalMinutes,
     required this.timeoutSeconds,
+    this.maxRetries = 0,
     this.customHeaders,
     required this.expectedStatusCode,
     this.jsonPropertyName,
@@ -135,6 +140,7 @@ class CreateEndpointRequest {
         'url': url,
         'intervalMinutes': intervalMinutes,
         'timeoutSeconds': timeoutSeconds,
+        'maxRetries': maxRetries,
         if (customHeaders != null && customHeaders!.isNotEmpty)
           'customHeaders': customHeaders,
         'expectedStatusCode': expectedStatusCode,

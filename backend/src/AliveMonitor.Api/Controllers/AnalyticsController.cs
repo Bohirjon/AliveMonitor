@@ -61,7 +61,7 @@ public class AnalyticsController(
         var logs = await checkLogRepository.GetByEndpointAsync(endpointId, fromDate, toDate, page, pageSize);
 
         var items = logs.Select(l => new CheckLogResponse(
-            l.Id, l.CheckedAt, l.HttpStatusCode, l.ResponseTimeMs, l.IsHealthy, l.ErrorMessage)).ToList();
+            l.Id, l.CheckedAt, l.HttpStatusCode, l.ResponseTimeMs, l.IsHealthy, l.ErrorMessage, l.RetryAttempts)).ToList();
 
         var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 

@@ -72,6 +72,24 @@ class CheckLogList extends StatelessWidget {
                       '${log.responseTimeMs.toStringAsFixed(0)} ms',
                       style: theme.textTheme.bodySmall,
                     ),
+                    if (log.retryAttempts > 0) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '${log.retryAttempts} retry${log.retryAttempts > 1 ? 'es' : ''}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 subtitle: log.errorMessage != null

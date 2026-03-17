@@ -17,6 +17,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
   const [url, setUrl] = useState('');
   const [intervalMinutes, setIntervalMinutes] = useState(1);
   const [timeoutSeconds, setTimeoutSeconds] = useState(30);
+  const [maxRetries, setMaxRetries] = useState(0);
   const [expectedStatusCode, setExpectedStatusCode] = useState(200);
   const [jsonPropertyName, setJsonPropertyName] = useState('');
   const [jsonPropertyExpectedValue, setJsonPropertyExpectedValue] = useState('');
@@ -31,6 +32,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
       setUrl(endpoint.url);
       setIntervalMinutes(endpoint.intervalMinutes);
       setTimeoutSeconds(endpoint.timeoutSeconds);
+      setMaxRetries(endpoint.maxRetries ?? 0);
       setExpectedStatusCode(endpoint.expectedStatusCode);
       setJsonPropertyName(endpoint.jsonPropertyName ?? '');
       setJsonPropertyExpectedValue(endpoint.jsonPropertyExpectedValue ?? '');
@@ -53,6 +55,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
       url,
       intervalMinutes,
       timeoutSeconds,
+      maxRetries,
       customHeaders,
       expectedStatusCode,
       jsonPropertyName: jsonPropertyName || undefined,
@@ -83,7 +86,7 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
             <label className="mb-1 block text-sm font-medium text-foreground">URL</label>
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://api.example.com/health" required />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-foreground">Interval (min)</label>
               <Input type="number" min={1} value={intervalMinutes} onChange={(e) => setIntervalMinutes(Number(e.target.value))} />
@@ -95,6 +98,10 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
             <div>
               <label className="mb-1 block text-sm font-medium text-foreground">Expected Status</label>
               <Input type="number" value={expectedStatusCode} onChange={(e) => setExpectedStatusCode(Number(e.target.value))} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground">Max Retries</label>
+              <Input type="number" min={0} max={5} value={maxRetries} onChange={(e) => setMaxRetries(Number(e.target.value))} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">

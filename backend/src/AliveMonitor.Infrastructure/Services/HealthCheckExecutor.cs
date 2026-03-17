@@ -12,6 +12,7 @@ namespace AliveMonitor.Infrastructure.Services;
 
 public class HealthCheckExecutor(IServiceScopeFactory scopeFactory, ILogger<HealthCheckExecutor> logger)
 {
+    private const int RetryDelaySeconds = 5;
     private static readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(120) };
 
     public async Task ExecuteAsync(Guid endpointId)
@@ -27,6 +28,22 @@ public class HealthCheckExecutor(IServiceScopeFactory scopeFactory, ILogger<Heal
         }
 
         var log = await PerformCheck(endpoint);
+        var retryAttempts = 0;
+
+        if (!log.IsHealthy && endpoint.MaxRetries > 0)
+        {
+            for (int i = 0; i < endpoint.MaxRetries; i++)
+            {
+                logger.LogDebug("Retry {Attempt}/{Max} for {Name} in {Delay}s",
+                    i + 1, endpoint.MaxRetries, endpoint.FriendlyName, RetryDelaySeconds);
+                await Task.Delay(TimeSpan.FromSeconds(RetryDelaySeconds));
+                log = await PerformCheck(endpoint);
+                retryAttempts = i + 1;
+                if (log.IsHealthy) break;
+            }
+        }
+
+        log.RetryAttempts = retryAttempts;
 
         db.HealthCheckLogs.Add(log);
 
@@ -54,8 +71,8 @@ public class HealthCheckExecutor(IServiceScopeFactory scopeFactory, ILogger<Heal
             }
         }
 
-        logger.LogInformation("Health check for {Name} ({Url}): {Status} in {ResponseTime}ms",
-            endpoint.FriendlyName, endpoint.Url, log.IsHealthy ? "Healthy" : "Unhealthy", log.ResponseTimeMs);
+        logger.LogInformation("Health check for {Name} ({Url}): {Status} in {ResponseTime}ms (retries: {Retries})",
+            endpoint.FriendlyName, endpoint.Url, log.IsHealthy ? "Healthy" : "Unhealthy", log.ResponseTimeMs, retryAttempts);
     }
 
     private static async Task<HealthCheckLog> PerformCheck(MonitoredEndpoint endpoint)

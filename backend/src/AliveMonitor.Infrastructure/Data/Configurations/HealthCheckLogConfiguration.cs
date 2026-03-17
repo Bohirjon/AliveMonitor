@@ -17,6 +17,7 @@ public class HealthCheckLogConfiguration : IEntityTypeConfiguration<HealthCheckL
         builder.Property(l => l.ResponseTimeMs).IsRequired();
         builder.Property(l => l.IsHealthy).IsRequired();
         builder.Property(l => l.ErrorMessage).HasMaxLength(2048);
+        builder.Property(l => l.RetryAttempts).HasDefaultValue(0);
 
         builder.HasOne(l => l.Endpoint)
             .WithMany(e => e.HealthCheckLogs)

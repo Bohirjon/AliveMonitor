@@ -21,6 +21,7 @@ export interface MonitoredEndpoint {
   url: string;
   intervalMinutes: number;
   timeoutSeconds: number;
+  maxRetries: number;
   isEnabled: boolean;
   customHeaders?: Record<string, string>;
   expectedStatusCode: number;
@@ -46,6 +47,7 @@ export interface HealthCheckLog {
   responseTimeMs: number;
   isHealthy: boolean;
   errorMessage?: string;
+  retryAttempts: number;
 }
 
 export interface Incident {
@@ -82,6 +84,7 @@ export interface CreateEndpointRequest {
   url: string;
   intervalMinutes: number;
   timeoutSeconds: number;
+  maxRetries?: number;
   customHeaders?: Record<string, string>;
   expectedStatusCode: number;
   jsonPropertyName?: string;

@@ -12,7 +12,8 @@ public record CreateEndpointRequest(
     string? JsonPropertyName = null,
     string? JsonPropertyExpectedValue = null,
     Guid? TeamId = null,
-    bool SslCheckEnabled = false);
+    bool SslCheckEnabled = false,
+    int MaxRetries = 0);
 
 public record UpdateEndpointRequest(
     string FriendlyName,
@@ -24,7 +25,8 @@ public record UpdateEndpointRequest(
     string? JsonPropertyName = null,
     string? JsonPropertyExpectedValue = null,
     Guid? TeamId = null,
-    bool SslCheckEnabled = false);
+    bool SslCheckEnabled = false,
+    int MaxRetries = 0);
 
 public record EndpointResponse(
     Guid Id,
@@ -46,4 +48,5 @@ public record EndpointResponse(
     bool SslCheckEnabled,
     DateTime? SslLastCheckedAt,
     DateTime? SslCertificateExpiresAt,
-    int? SslDaysUntilExpiry);
+    int? SslDaysUntilExpiry,
+    int MaxRetries);

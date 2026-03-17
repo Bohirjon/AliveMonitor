@@ -27,6 +27,7 @@ class HealthCheckLog {
   final double responseTimeMs;
   final bool isHealthy;
   final String? errorMessage;
+  final int retryAttempts;
 
   HealthCheckLog({
     required this.id,
@@ -35,6 +36,7 @@ class HealthCheckLog {
     required this.responseTimeMs,
     required this.isHealthy,
     this.errorMessage,
+    this.retryAttempts = 0,
   });
 
   factory HealthCheckLog.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +47,7 @@ class HealthCheckLog {
         responseTimeMs: (json['responseTimeMs'] as num).toDouble(),
         isHealthy: json['isHealthy'] as bool,
         errorMessage: json['errorMessage'] as String?,
+        retryAttempts: json['retryAttempts'] as int? ?? 0,
       );
 }
 

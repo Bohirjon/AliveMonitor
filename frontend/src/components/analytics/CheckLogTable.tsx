@@ -22,6 +22,7 @@ export default function CheckLogTable({ data, onPageChange }: CheckLogTableProps
               <th className="px-3 py-2 font-medium text-muted-foreground">Status</th>
               <th className="px-3 py-2 font-medium text-muted-foreground">HTTP Code</th>
               <th className="px-3 py-2 font-medium text-muted-foreground">Response Time</th>
+              <th className="px-3 py-2 font-medium text-muted-foreground">Retries</th>
               <th className="px-3 py-2 font-medium text-muted-foreground">Error</th>
             </tr>
           </thead>
@@ -36,6 +37,7 @@ export default function CheckLogTable({ data, onPageChange }: CheckLogTableProps
                 </td>
                 <td className="px-3 py-2">{log.httpStatusCode ?? '-'}</td>
                 <td className="px-3 py-2">{log.responseTimeMs}ms</td>
+                <td className="px-3 py-2">{log.retryAttempts > 0 ? log.retryAttempts : '-'}</td>
                 <td className="max-w-xs truncate px-3 py-2 text-muted-foreground">{log.errorMessage ?? '-'}</td>
               </tr>
             ))}

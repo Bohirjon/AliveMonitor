@@ -20,6 +20,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
   late final TextEditingController _intervalCtrl;
   late final TextEditingController _timeoutCtrl;
   late final TextEditingController _statusCodeCtrl;
+  late final TextEditingController _maxRetriesCtrl;
   late final TextEditingController _jsonPropCtrl;
   late final TextEditingController _jsonValueCtrl;
 
@@ -42,6 +43,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
         TextEditingController(text: (ep?.timeoutSeconds ?? 30).toString());
     _statusCodeCtrl =
         TextEditingController(text: (ep?.expectedStatusCode ?? 200).toString());
+    _maxRetriesCtrl =
+        TextEditingController(text: (ep?.maxRetries ?? 0).toString());
     _jsonPropCtrl = TextEditingController(text: ep?.jsonPropertyName ?? '');
     _jsonValueCtrl =
         TextEditingController(text: ep?.jsonPropertyExpectedValue ?? '');
@@ -69,6 +72,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
     _intervalCtrl.dispose();
     _timeoutCtrl.dispose();
     _statusCodeCtrl.dispose();
+    _maxRetriesCtrl.dispose();
     _jsonPropCtrl.dispose();
     _jsonValueCtrl.dispose();
     for (final h in _headers) {
@@ -95,6 +99,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
       url: _urlCtrl.text.trim(),
       intervalMinutes: int.parse(_intervalCtrl.text),
       timeoutSeconds: int.parse(_timeoutCtrl.text),
+      maxRetries: int.parse(_maxRetriesCtrl.text),
       expectedStatusCode: int.parse(_statusCodeCtrl.text),
       customHeaders: headers.isNotEmpty ? headers : null,
       jsonPropertyName:
@@ -213,6 +218,20 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _maxRetriesCtrl,
+                  decoration: const InputDecoration(
+                      labelText: 'Max Retries (0-5)'),
+                  keyboardType: TextInputType.number,
+                  validator: (v) {
+                    final n = int.tryParse(v ?? '');
+                    if (n == null || n < 0 || n > 5) {
+                      return '0-5';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

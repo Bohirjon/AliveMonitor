@@ -19,6 +19,7 @@ public class MonitoredEndpointConfiguration : IEntityTypeConfiguration<Monitored
 
         builder.Property(e => e.IntervalMinutes).HasDefaultValue(1);
         builder.Property(e => e.TimeoutSeconds).HasDefaultValue(30);
+        builder.Property(e => e.MaxRetries).HasDefaultValue(0);
         builder.Property(e => e.IsEnabled).HasDefaultValue(false);
 
         builder.Property(e => e.CustomHeadersJson).HasColumnType("jsonb");

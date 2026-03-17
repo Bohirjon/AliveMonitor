@@ -10,6 +10,7 @@ public class MonitoredEndpoint
     public string Url { get; set; } = default!;
     public int IntervalMinutes { get; set; } = 1;
     public int TimeoutSeconds { get; set; } = 30;
+    public int MaxRetries { get; set; }
     public bool IsEnabled { get; set; }
     public string? CustomHeadersJson { get; set; }
     public int ExpectedStatusCode { get; set; } = 200;
