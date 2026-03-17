@@ -86,21 +86,21 @@ export default function EndpointForm({ endpoint, onSubmit, onClose, isPending }:
             <label className="mb-1 block text-sm font-medium text-foreground">URL</label>
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://api.example.com/health" required />
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 items-end gap-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-foreground">Interval (min)</label>
+              <label className="mb-1 block text-sm font-medium text-foreground whitespace-nowrap">Interval (min)</label>
               <Input type="number" min={1} value={intervalMinutes} onChange={(e) => setIntervalMinutes(Number(e.target.value))} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-foreground">Timeout (sec)</label>
+              <label className="mb-1 block text-sm font-medium text-foreground whitespace-nowrap">Timeout (sec)</label>
               <Input type="number" min={1} value={timeoutSeconds} onChange={(e) => setTimeoutSeconds(Number(e.target.value))} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-foreground">Expected Status</label>
+              <label className="mb-1 block text-sm font-medium text-foreground whitespace-nowrap">Status Code</label>
               <Input type="number" value={expectedStatusCode} onChange={(e) => setExpectedStatusCode(Number(e.target.value))} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-foreground">Max Retries</label>
+              <label className="mb-1 block text-sm font-medium text-foreground whitespace-nowrap">Max Retries</label>
               <Input type="number" min={0} max={5} value={maxRetries} onChange={(e) => setMaxRetries(Number(e.target.value))} />
             </div>
           </div>
