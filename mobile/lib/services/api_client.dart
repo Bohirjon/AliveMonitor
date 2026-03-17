@@ -61,6 +61,15 @@ class ApiClient {
               headers: {'Content-Type': 'application/json'},
             ));
 
+            if (kDebugMode) {
+              (refreshDio.httpClientAdapter as IOHttpClientAdapter)
+                  .createHttpClient = () {
+                final client = HttpClient();
+                client.badCertificateCallback = (cert, host, port) => true;
+                return client;
+              };
+            }
+
             final response = await refreshDio.post(
               '/auth/refresh',
               data: {'refreshToken': tokens.refreshToken},
