@@ -163,6 +163,27 @@ class _TeamCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                if (team.webhookUrl != null)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.webhook, size: 14, color: Colors.blue),
+                        SizedBox(width: 4),
+                        Text('WH',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     switch (value) {
@@ -416,6 +437,7 @@ class _TeamFormSheetState extends State<_TeamFormSheet> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameCtrl;
   late final TextEditingController _emailsCtrl;
+  late final TextEditingController _webhookUrlCtrl;
   bool _isSubmitting = false;
 
   bool get _isEditing => widget.team != null;
@@ -427,12 +449,14 @@ class _TeamFormSheetState extends State<_TeamFormSheet> {
     _emailsCtrl = TextEditingController(
       text: widget.team?.memberEmails.join(', ') ?? '',
     );
+    _webhookUrlCtrl = TextEditingController(text: widget.team?.webhookUrl ?? '');
   }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _emailsCtrl.dispose();
+    _webhookUrlCtrl.dispose();
     super.dispose();
   }
 
@@ -446,9 +470,11 @@ class _TeamFormSheetState extends State<_TeamFormSheet> {
         .where((e) => e.isNotEmpty)
         .toList();
 
+    final webhookUrl = _webhookUrlCtrl.text.trim();
     final request = CreateTeamRequest(
       name: _nameCtrl.text.trim(),
       memberEmails: emails,
+      webhookUrl: webhookUrl.isEmpty ? null : webhookUrl,
     );
 
     try {
@@ -508,6 +534,15 @@ class _TeamFormSheetState extends State<_TeamFormSheet> {
                 hintText: 'Comma-separated emails',
               ),
               maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _webhookUrlCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Webhook URL',
+                hintText: 'https://example.com/webhook',
+              ),
+              keyboardType: TextInputType.url,
             ),
             const SizedBox(height: 16),
             FilledButton(

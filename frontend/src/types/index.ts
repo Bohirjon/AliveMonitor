@@ -13,6 +13,7 @@ export interface User {
   avatarUrl?: string;
   alertEmail: string;
   telegramLinked: boolean;
+  webhookUrl?: string;
 }
 
 export interface MonitoredEndpoint {
@@ -102,6 +103,7 @@ export interface Team {
   name: string;
   memberEmails: string[];
   telegramLinked: boolean;
+  webhookUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -120,4 +122,5 @@ export interface TelegramStatusResponse {
 export interface CreateTeamRequest {
   name: string;
   memberEmails: string[];
+  webhookUrl?: string;
 }

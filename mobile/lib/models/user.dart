@@ -5,6 +5,7 @@ class User {
   final String? avatarUrl;
   final String alertEmail;
   final bool telegramLinked;
+  final String? webhookUrl;
 
   User({
     required this.id,
@@ -13,6 +14,7 @@ class User {
     this.avatarUrl,
     required this.alertEmail,
     required this.telegramLinked,
+    this.webhookUrl,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -22,6 +24,7 @@ class User {
         avatarUrl: json['avatarUrl'] as String?,
         alertEmail: json['alertEmail'] as String? ?? '',
         telegramLinked: json['telegramLinked'] as bool? ?? false,
+        webhookUrl: json['webhookUrl'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,11 +34,13 @@ class User {
         'avatarUrl': avatarUrl,
         'alertEmail': alertEmail,
         'telegramLinked': telegramLinked,
+        'webhookUrl': webhookUrl,
       };
 
   User copyWith({
     String? alertEmail,
     bool? telegramLinked,
+    String? webhookUrl,
   }) =>
       User(
         id: id,
@@ -44,5 +49,6 @@ class User {
         avatarUrl: avatarUrl,
         alertEmail: alertEmail ?? this.alertEmail,
         telegramLinked: telegramLinked ?? this.telegramLinked,
+        webhookUrl: webhookUrl ?? this.webhookUrl,
       );
 }

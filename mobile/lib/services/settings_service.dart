@@ -16,4 +16,10 @@ class SettingsService {
       'alertEmail': alertEmail,
     });
   }
+
+  Future<void> updateWebhookUrl(String? webhookUrl) async {
+    await _api.dio.put('/settings/webhook-url', data: {
+      'webhookUrl': webhookUrl,
+    });
+  }
 }

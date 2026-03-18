@@ -4,7 +4,7 @@ using AliveMonitor.Core.Interfaces;
 
 namespace AliveMonitor.Infrastructure.Services;
 
-public class CompositeAlertService(EmailAlertService emailAlertService, TelegramAlertService telegramAlertService) : IAlertService
+public class CompositeAlertService(EmailAlertService emailAlertService, TelegramAlertService telegramAlertService, WebhookAlertService webhookAlertService) : IAlertService
 {
     public async Task SendFailureAlertAsync(MonitoredEndpoint endpoint, Incident incident, HealthCheckLog checkLog, AlertRecipients recipients)
     {
@@ -15,6 +15,9 @@ public class CompositeAlertService(EmailAlertService emailAlertService, Telegram
 
         if (recipients.TelegramChatIds.Count > 0)
             tasks.Add(telegramAlertService.SendFailureAlertAsync(endpoint, incident, checkLog, recipients));
+
+        if (recipients.WebhookUrls.Count > 0)
+            tasks.Add(webhookAlertService.SendFailureAlertAsync(endpoint, incident, checkLog, recipients));
 
         await Task.WhenAll(tasks);
     }
@@ -29,6 +32,9 @@ public class CompositeAlertService(EmailAlertService emailAlertService, Telegram
         if (recipients.TelegramChatIds.Count > 0)
             tasks.Add(telegramAlertService.SendRecoveryAlertAsync(endpoint, incident, recipients));
 
+        if (recipients.WebhookUrls.Count > 0)
+            tasks.Add(webhookAlertService.SendRecoveryAlertAsync(endpoint, incident, recipients));
+
         await Task.WhenAll(tasks);
     }
 
@@ -41,6 +47,9 @@ public class CompositeAlertService(EmailAlertService emailAlertService, Telegram
 
         if (recipients.TelegramChatIds.Count > 0)
             tasks.Add(telegramAlertService.SendSslExpirationAlertAsync(endpoint, checkLog, thresholdDays, recipients));
+
+        if (recipients.WebhookUrls.Count > 0)
+            tasks.Add(webhookAlertService.SendSslExpirationAlertAsync(endpoint, checkLog, thresholdDays, recipients));
 
         await Task.WhenAll(tasks);
     }

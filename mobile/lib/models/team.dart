@@ -3,6 +3,7 @@ class Team {
   final String name;
   final List<String> memberEmails;
   final bool telegramLinked;
+  final String? webhookUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -11,6 +12,7 @@ class Team {
     required this.name,
     required this.memberEmails,
     required this.telegramLinked,
+    this.webhookUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -20,6 +22,7 @@ class Team {
         name: json['name'] as String,
         memberEmails: List<String>.from(json['memberEmails'] as List),
         telegramLinked: json['telegramLinked'] as bool? ?? false,
+        webhookUrl: json['webhookUrl'] as String?,
         createdAt: DateTime.parse(json['createdAt'] as String),
         updatedAt: DateTime.parse(json['updatedAt'] as String),
       );
@@ -28,12 +31,14 @@ class Team {
 class CreateTeamRequest {
   final String name;
   final List<String> memberEmails;
+  final String? webhookUrl;
 
-  CreateTeamRequest({required this.name, required this.memberEmails});
+  CreateTeamRequest({required this.name, required this.memberEmails, this.webhookUrl});
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'memberEmails': memberEmails,
+        if (webhookUrl != null) 'webhookUrl': webhookUrl,
       };
 }
 

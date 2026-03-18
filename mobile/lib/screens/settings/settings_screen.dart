@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import 'profile_section.dart';
 import 'alert_email_section.dart';
+import 'webhook_section.dart';
 import 'telegram_section.dart';
 import 'teams_section.dart';
 
@@ -38,6 +39,8 @@ class SettingsScreen extends StatelessWidget {
           ProfileSection(user: auth.user!),
           const SizedBox(height: 24),
           AlertEmailSection(user: auth.user!),
+          const SizedBox(height: 24),
+          WebhookSection(user: auth.user!),
           const SizedBox(height: 24),
           const TelegramSection(),
           const SizedBox(height: 24),

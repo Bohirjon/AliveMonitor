@@ -14,11 +14,13 @@ interface TeamFormProps {
 export default function TeamForm({ team, onSubmit, onClose, isPending }: TeamFormProps) {
   const [name, setName] = useState('');
   const [emails, setEmails] = useState<string[]>(['']);
+  const [webhookUrl, setWebhookUrl] = useState('');
 
   useEffect(() => {
     if (team) {
       setName(team.name);
       setEmails(team.memberEmails.length > 0 ? [...team.memberEmails] : ['']);
+      setWebhookUrl(team.webhookUrl ?? '');
     }
   }, [team]);
 
@@ -26,7 +28,7 @@ export default function TeamForm({ team, onSubmit, onClose, isPending }: TeamFor
     e.preventDefault();
     const filtered = emails.filter((email) => email.trim() !== '');
     if (filtered.length === 0) return;
-    onSubmit({ name, memberEmails: filtered });
+    onSubmit({ name, memberEmails: filtered, webhookUrl: webhookUrl.trim() || undefined });
   };
 
   return (
@@ -73,6 +75,16 @@ export default function TeamForm({ team, onSubmit, onClose, isPending }: TeamFor
                 )}
               </div>
             ))}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-foreground">Webhook URL</label>
+            <Input
+              type="url"
+              placeholder="https://example.com/webhook"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+            />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import AppLayout from '@/components/layout/AppLayout';
 import { useAuth } from '@/context/AuthContext';
-import { updateAlertEmail } from '@/api/settings';
+import { updateAlertEmail, updateWebhookUrl } from '@/api/settings';
 import { toast } from 'sonner';
 import TeamList from '@/components/settings/TeamList';
 import TelegramLinkSection from '@/components/settings/TelegramLinkSection';
@@ -12,9 +12,14 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const [alertEmail, setAlertEmail] = useState('');
   const [saving, setSaving] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState('');
+  const [webhookSaving, setWebhookSaving] = useState(false);
 
   useEffect(() => {
-    if (user) setAlertEmail(user.alertEmail);
+    if (user) {
+      setAlertEmail(user.alertEmail);
+      setWebhookUrl(user.webhookUrl ?? '');
+    }
   }, [user]);
 
   const handleSave = async () => {
@@ -26,6 +31,18 @@ export default function SettingsPage() {
       toast.error('Failed to update alert email');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleWebhookSave = async () => {
+    setWebhookSaving(true);
+    try {
+      await updateWebhookUrl(webhookUrl);
+      toast.success('Webhook URL updated');
+    } catch {
+      toast.error('Failed to update webhook URL');
+    } finally {
+      setWebhookSaving(false);
     }
   };
 
@@ -69,6 +86,26 @@ export default function SettingsPage() {
                 />
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? 'Saving...' : 'Save'}
+                </Button>
+              </div>
+            </div>
+
+            {/* Webhook */}
+            <div className="rounded-lg border border-border bg-card p-6">
+              <h2 className="mb-4 text-lg font-semibold text-foreground">Webhook Notifications</h2>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Receive a JSON POST request to this URL when an endpoint status changes.
+              </p>
+              <div className="flex gap-3">
+                <Input
+                  type="url"
+                  placeholder="https://example.com/webhook"
+                  value={webhookUrl}
+                  onChange={(e) => setWebhookUrl(e.target.value)}
+                  className="max-w-sm"
+                />
+                <Button onClick={handleWebhookSave} disabled={webhookSaving}>
+                  {webhookSaving ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>

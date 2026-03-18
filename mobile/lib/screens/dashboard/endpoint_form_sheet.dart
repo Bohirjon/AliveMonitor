@@ -37,26 +37,33 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
     final ep = widget.endpoint;
     _nameCtrl = TextEditingController(text: ep?.friendlyName ?? '');
     _urlCtrl = TextEditingController(text: ep?.url ?? '');
-    _intervalCtrl =
-        TextEditingController(text: (ep?.intervalMinutes ?? 5).toString());
-    _timeoutCtrl =
-        TextEditingController(text: (ep?.timeoutSeconds ?? 30).toString());
-    _statusCodeCtrl =
-        TextEditingController(text: (ep?.expectedStatusCode ?? 200).toString());
-    _maxRetriesCtrl =
-        TextEditingController(text: (ep?.maxRetries ?? 0).toString());
+    _intervalCtrl = TextEditingController(
+      text: (ep?.intervalMinutes ?? 5).toString(),
+    );
+    _timeoutCtrl = TextEditingController(
+      text: (ep?.timeoutSeconds ?? 30).toString(),
+    );
+    _statusCodeCtrl = TextEditingController(
+      text: (ep?.expectedStatusCode ?? 200).toString(),
+    );
+    _maxRetriesCtrl = TextEditingController(
+      text: (ep?.maxRetries ?? 0).toString(),
+    );
     _jsonPropCtrl = TextEditingController(text: ep?.jsonPropertyName ?? '');
-    _jsonValueCtrl =
-        TextEditingController(text: ep?.jsonPropertyExpectedValue ?? '');
+    _jsonValueCtrl = TextEditingController(
+      text: ep?.jsonPropertyExpectedValue ?? '',
+    );
     _selectedTeamId = ep?.teamId;
     _sslCheckEnabled = ep?.sslCheckEnabled ?? false;
 
     if (ep?.customHeaders != null) {
       _headers = ep!.customHeaders!.entries
-          .map((e) => MapEntry(
-                TextEditingController(text: e.key),
-                TextEditingController(text: e.value),
-              ))
+          .map(
+            (e) => MapEntry(
+              TextEditingController(text: e.key),
+              TextEditingController(text: e.value),
+            ),
+          )
           .toList();
     }
 
@@ -102,10 +109,12 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
       maxRetries: int.parse(_maxRetriesCtrl.text),
       expectedStatusCode: int.parse(_statusCodeCtrl.text),
       customHeaders: headers.isNotEmpty ? headers : null,
-      jsonPropertyName:
-          _jsonPropCtrl.text.isNotEmpty ? _jsonPropCtrl.text : null,
-      jsonPropertyExpectedValue:
-          _jsonValueCtrl.text.isNotEmpty ? _jsonValueCtrl.text : null,
+      jsonPropertyName: _jsonPropCtrl.text.isNotEmpty
+          ? _jsonPropCtrl.text
+          : null,
+      jsonPropertyExpectedValue: _jsonValueCtrl.text.isNotEmpty
+          ? _jsonValueCtrl.text
+          : null,
       teamId: _selectedTeamId,
       sslCheckEnabled: _sslCheckEnabled,
     );
@@ -123,7 +132,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                'Failed to ${_isEditing ? "update" : "create"} endpoint'),
+              'Failed to ${_isEditing ? "update" : "create"} endpoint',
+            ),
           ),
         );
       }
@@ -168,8 +178,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                 const SizedBox(height: 24),
                 TextFormField(
                   controller: _nameCtrl,
-                  decoration:
-                      const InputDecoration(labelText: 'Friendly Name'),
+                  decoration: const InputDecoration(labelText: 'Friendly Name'),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
@@ -180,8 +189,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                   keyboardType: TextInputType.url,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
-                    if (!v.startsWith('http://') &&
-                        !v.startsWith('https://')) {
+                    if (!v.startsWith('http://') && !v.startsWith('https://')) {
                       return 'Must start with http:// or https://';
                     }
                     return null;
@@ -194,7 +202,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                       child: TextFormField(
                         controller: _intervalCtrl,
                         decoration: const InputDecoration(
-                            labelText: 'Interval (min)'),
+                          labelText: 'Interval (min)',
+                        ),
                         keyboardType: TextInputType.number,
                         validator: (v) {
                           final n = int.tryParse(v ?? '');
@@ -208,7 +217,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                       child: TextFormField(
                         controller: _timeoutCtrl,
                         decoration: const InputDecoration(
-                            labelText: 'Timeout (sec)'),
+                          labelText: 'Timeout (sec)',
+                        ),
                         keyboardType: TextInputType.number,
                         validator: (v) {
                           final n = int.tryParse(v ?? '');
@@ -223,7 +233,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                 TextFormField(
                   controller: _maxRetriesCtrl,
                   decoration: const InputDecoration(
-                      labelText: 'Max Retries (0-5)'),
+                    labelText: 'Max Retries (0-5)',
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     final n = int.tryParse(v ?? '');
@@ -237,7 +248,8 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                 TextFormField(
                   controller: _statusCodeCtrl,
                   decoration: const InputDecoration(
-                      labelText: 'Expected Status Code'),
+                    labelText: 'Expected Status Code',
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     final n = int.tryParse(v ?? '');
@@ -266,27 +278,31 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                 Consumer<TeamProvider>(
                   builder: (context, teamProvider, _) {
                     // Reset selection if team not in loaded list
-                    final validTeamIds = teamProvider.teams.map((t) => t.id).toSet();
+                    final validTeamIds = teamProvider.teams
+                        .map((t) => t.id)
+                        .toSet();
                     final effectiveTeamId =
-                        _selectedTeamId != null && validTeamIds.contains(_selectedTeamId)
-                            ? _selectedTeamId
-                            : null;
+                        _selectedTeamId != null &&
+                            validTeamIds.contains(_selectedTeamId)
+                        ? _selectedTeamId
+                        : null;
 
                     return DropdownButtonFormField<String?>(
-                      value: effectiveTeamId,
+                      initialValue: effectiveTeamId,
                       decoration: const InputDecoration(labelText: 'Team'),
                       items: [
                         const DropdownMenuItem(
                           value: null,
                           child: Text('No team'),
                         ),
-                        ...teamProvider.teams.map((t) => DropdownMenuItem(
-                              value: t.id,
-                              child: Text(t.name),
-                            )),
+                        ...teamProvider.teams.map(
+                          (t) => DropdownMenuItem(
+                            value: t.id,
+                            child: Text(t.name),
+                          ),
+                        ),
                       ],
-                      onChanged: (v) =>
-                          setState(() => _selectedTeamId = v),
+                      onChanged: (v) => setState(() => _selectedTeamId = v),
                     );
                   },
                 ),
@@ -295,23 +311,23 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                   title: const Text('SSL Certificate Monitoring'),
                   contentPadding: EdgeInsets.zero,
                   value: _sslCheckEnabled,
-                  onChanged: (v) =>
-                      setState(() => _sslCheckEnabled = v),
+                  onChanged: (v) => setState(() => _sslCheckEnabled = v),
                 ),
                 const SizedBox(height: 16),
                 // Custom headers
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Custom Headers',
-                        style: theme.textTheme.titleSmall),
+                    Text('Custom Headers', style: theme.textTheme.titleSmall),
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          _headers.add(MapEntry(
-                            TextEditingController(),
-                            TextEditingController(),
-                          ));
+                          _headers.add(
+                            MapEntry(
+                              TextEditingController(),
+                              TextEditingController(),
+                            ),
+                          );
                         });
                       },
                       icon: const Icon(Icons.add),
@@ -329,16 +345,16 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                         Expanded(
                           child: TextField(
                             controller: header.key,
-                            decoration:
-                                const InputDecoration(hintText: 'Key'),
+                            decoration: const InputDecoration(hintText: 'Key'),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: TextField(
                             controller: header.value,
-                            decoration:
-                                const InputDecoration(hintText: 'Value'),
+                            decoration: const InputDecoration(
+                              hintText: 'Value',
+                            ),
                           ),
                         ),
                         IconButton(
@@ -347,8 +363,10 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                             header.value.dispose();
                             setState(() => _headers.removeAt(idx));
                           },
-                          icon: const Icon(Icons.remove_circle_outline,
-                              size: 20),
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                            size: 20,
+                          ),
                         ),
                       ],
                     ),
@@ -361,8 +379,7 @@ class _EndpointFormSheetState extends State<EndpointFormSheet> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child:
-                              CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(_isEditing ? 'Update' : 'Create'),
                 ),

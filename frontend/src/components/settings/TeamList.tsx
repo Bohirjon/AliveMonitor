@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pencil, Trash2, Users, MessageCircle } from 'lucide-react';
+import { Pencil, Trash2, Users, MessageCircle, Webhook } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTeams, useCreateTeam, useUpdateTeam, useDeleteTeam } from '@/hooks/useTeams';
 import { useGenerateLinkCode, useUnlinkTeamTelegram } from '@/hooks/useTelegram';
@@ -63,6 +63,11 @@ export default function TeamList() {
                     {team.telegramLinked && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                         <MessageCircle className="h-3 w-3" /> Telegram
+                      </span>
+                    )}
+                    {team.webhookUrl && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        <Webhook className="h-3 w-3" /> Webhook
                       </span>
                     )}
                   </div>

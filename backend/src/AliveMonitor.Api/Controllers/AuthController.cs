@@ -94,7 +94,7 @@ public class AuthController(
 
         await refreshTokenRepository.CreateAsync(refreshTokenEntity);
 
-        var userDto = new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail, user.TelegramChatId is not null);
+        var userDto = new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail, user.TelegramChatId is not null, user.WebhookUrl);
         return new AuthResponse(accessToken, refreshToken, userDto);
     }
 }

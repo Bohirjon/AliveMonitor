@@ -42,6 +42,7 @@ public class TeamsController(ITeamRepository teamRepository) : ControllerBase
             UserId = UserId,
             Name = request.Name,
             MemberEmails = request.MemberEmails,
+            WebhookUrl = request.WebhookUrl,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };
@@ -63,6 +64,7 @@ public class TeamsController(ITeamRepository teamRepository) : ControllerBase
 
         team.Name = request.Name;
         team.MemberEmails = request.MemberEmails;
+        team.WebhookUrl = request.WebhookUrl;
 
         await teamRepository.UpdateAsync(team);
         return Ok(MapToResponse(team));
@@ -83,6 +85,7 @@ public class TeamsController(ITeamRepository teamRepository) : ControllerBase
         t.Name,
         t.MemberEmails,
         t.TelegramChatId is not null,
+        t.WebhookUrl,
         t.CreatedAt,
         t.UpdatedAt);
 }

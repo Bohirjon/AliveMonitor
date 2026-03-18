@@ -19,7 +19,7 @@ public class SettingsController(IUserRepository userRepository) : ControllerBase
         var user = await userRepository.GetByIdAsync(UserId);
         if (user is null) return NotFound();
 
-        return Ok(new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail, user.TelegramChatId is not null));
+        return Ok(new UserDto(user.Id, user.Email, user.Name, user.AvatarUrl, user.AlertEmail, user.TelegramChatId is not null, user.WebhookUrl));
     }
 
     [HttpPut("alert-email")]
@@ -36,6 +36,27 @@ public class SettingsController(IUserRepository userRepository) : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("webhook-url")]
+    public async Task<IActionResult> UpdateWebhookUrl([FromBody] UpdateWebhookUrlRequest request)
+    {
+        var user = await userRepository.GetByIdAsync(UserId);
+        if (user is null) return NotFound();
+
+        var url = request.WebhookUrl?.Trim();
+        if (!string.IsNullOrEmpty(url))
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != "http" && uri.Scheme != "https"))
+                return BadRequest(new { message = "Webhook URL must be a valid HTTP or HTTPS URL" });
+        }
+
+        user.WebhookUrl = string.IsNullOrEmpty(url) ? null : url;
+        await userRepository.UpdateAsync(user);
+
+        return NoContent();
+    }
 }
 
 public record UpdateAlertEmailRequest(string AlertEmail);
+public record UpdateWebhookUrlRequest(string? WebhookUrl);

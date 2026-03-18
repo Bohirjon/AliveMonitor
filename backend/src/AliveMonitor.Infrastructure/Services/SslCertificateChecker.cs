@@ -142,7 +142,7 @@ public class SslCertificateChecker(IServiceScopeFactory scopeFactory, ILogger<Ss
         var alertService = services.GetRequiredService<IAlertService>();
 
         var recipients = await alertRecipientResolver.GetAlertRecipientsAsync(endpoint);
-        if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0)
+        if (recipients.Emails.Count > 0 || recipients.TelegramChatIds.Count > 0 || recipients.WebhookUrls.Count > 0)
         {
             await alertService.SendSslExpirationAlertAsync(endpoint, log, crossedThreshold.Value, recipients);
             logger.LogInformation("SSL expiration alert sent for {Name} at {Threshold}-day threshold",

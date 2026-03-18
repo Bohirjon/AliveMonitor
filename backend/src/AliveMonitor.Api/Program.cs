@@ -40,6 +40,7 @@ builder.Services.AddScoped<AlertRecipientResolver>();
 builder.Services.AddScoped<AlertDispatcher>();
 builder.Services.AddScoped<EmailAlertService>();
 builder.Services.AddScoped<TelegramAlertService>();
+builder.Services.AddScoped<WebhookAlertService>();
 builder.Services.AddScoped<IAlertService, CompositeAlertService>();
 builder.Services.AddScoped<TelegramLinkCodeService>();
 builder.Services.AddScoped<SslCertificateChecker>();

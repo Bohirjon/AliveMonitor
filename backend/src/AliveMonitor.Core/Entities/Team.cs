@@ -7,6 +7,7 @@ public class Team
     public string Name { get; set; } = default!;
     public List<string> MemberEmails { get; set; } = [];
     public long? TelegramChatId { get; set; }
+    public string? WebhookUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

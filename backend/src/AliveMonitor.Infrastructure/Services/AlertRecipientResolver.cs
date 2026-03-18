@@ -11,12 +11,15 @@ public class AlertRecipientResolver(ITeamRepository teamRepository, IUserReposit
         if (endpoint.TeamId is not null)
         {
             var team = await teamRepository.GetByIdAsync(endpoint.TeamId.Value, endpoint.UserId);
-            if (team is not null && (team.MemberEmails.Count > 0 || team.TelegramChatId.HasValue))
+            if (team is not null && (team.MemberEmails.Count > 0 || team.TelegramChatId.HasValue || !string.IsNullOrWhiteSpace(team.WebhookUrl)))
             {
                 var telegramChatIds = team.TelegramChatId.HasValue
                     ? new List<long> { team.TelegramChatId.Value }
                     : new List<long>();
-                return new AlertRecipients(team.MemberEmails, telegramChatIds);
+                var webhookUrls = !string.IsNullOrWhiteSpace(team.WebhookUrl)
+                    ? new List<string> { team.WebhookUrl }
+                    : new List<string>();
+                return new AlertRecipients(team.MemberEmails, telegramChatIds, webhookUrls);
             }
         }
 
@@ -27,9 +30,12 @@ public class AlertRecipientResolver(ITeamRepository teamRepository, IUserReposit
             var telegramChatIds = user.TelegramChatId.HasValue
                 ? new List<long> { user.TelegramChatId.Value }
                 : new List<long>();
-            return new AlertRecipients(emails, telegramChatIds);
+            var webhookUrls = !string.IsNullOrWhiteSpace(user.WebhookUrl)
+                ? new List<string> { user.WebhookUrl }
+                : new List<string>();
+            return new AlertRecipients(emails, telegramChatIds, webhookUrls);
         }
 
-        return new AlertRecipients([], []);
+        return new AlertRecipients([], [], []);
     }
 }

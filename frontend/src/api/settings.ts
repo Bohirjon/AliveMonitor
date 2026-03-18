@@ -9,3 +9,7 @@ export async function getProfile(): Promise<User> {
 export async function updateAlertEmail(alertEmail: string): Promise<void> {
   await apiClient.put('/settings/alert-email', { alertEmail });
 }
+
+export async function updateWebhookUrl(webhookUrl: string): Promise<void> {
+  await apiClient.put('/settings/webhook-url', { webhookUrl });
+}
