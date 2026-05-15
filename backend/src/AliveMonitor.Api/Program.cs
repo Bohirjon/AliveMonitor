@@ -151,14 +151,27 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<AliveMonitor.Api.Middleware.ExceptionHandlingMiddleware>();
-app.UseHttpsRedirection();
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.MapHub<AliveMonitor.Api.Hubs.EndpointStatusHub>("/hubs/endpoint-status");
-app.UseHangfireDashboard();
+
+var hangfireUser = builder.Configuration["Hangfire:DashboardUser"];
+var hangfirePassword = builder.Configuration["Hangfire:DashboardPassword"];
+if (!string.IsNullOrWhiteSpace(hangfireUser) && !string.IsNullOrWhiteSpace(hangfirePassword))
+{
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = new[]
+        {
+            new AliveMonitor.Api.Middleware.HangfireBasicAuthFilter(hangfireUser, hangfirePassword)
+        }
+    });
+}
+
 app.MapFallbackToFile("index.html");
 
 // Auto-migrate database + sync schedules on startup

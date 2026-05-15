@@ -501,3 +501,6 @@ Thumbs.db
 # Secrets
 *.pfx
 appsettings.*.local.json
+
+# Aspire publish artifacts
+aspire-output/
